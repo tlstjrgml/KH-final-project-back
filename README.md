@@ -3,7 +3,7 @@
 청년복지MOA 백엔드 서버 (Spring Boot)
 
 ## 개발 환경
-- Java 17
+- Java 21
 - Spring Boot 4.0.6
 - Gradle
 - MyBatis
