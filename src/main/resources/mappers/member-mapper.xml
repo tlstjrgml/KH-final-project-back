@@ -8,4 +8,8 @@
 			SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{kakaoId}, #{loginType}, 'ACTIVE', 'N', SYSDATE, #{nickname}
 		)
 	</insert>
+	
+	<select id="findByKakaoId" resultType="Member">
+		SELECT * FROM MEMBER WHERE KAKAO_ID=#{kakaoId}
+	</select>
 </mapper>

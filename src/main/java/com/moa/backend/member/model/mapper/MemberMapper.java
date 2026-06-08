@@ -7,4 +7,7 @@ import com.moa.backend.member.model.vo.Member;
 @Mapper
 public interface MemberMapper {
 	int insertMember(Member m);
+
+	Member findByKakaoId(Long kakaoId);
+	
 }
