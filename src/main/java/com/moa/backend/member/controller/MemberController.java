@@ -1,7 +1,10 @@
 package com.moa.backend.member.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,7 +50,26 @@ public class MemberController {
 			return "에러" + e.getMessage();
 		}
 	}
-	
-	
+
+	// 이메일로 회원가입하기
+	@PostMapping("/signup")
+	public ResponseEntity<String> signup(@RequestBody Member member) {
+		// 1. 비밀번호 암호화 하기
+		member.setPassword(bcrypt.encode(member.getPassword()));
+
+		// 2. 이메일로 가입이므로 로그인타입 LOCAL로
+		member.setLoginType("LOCAL");
+
+		// 3. DB에 넣기
+		int result = mService.insertMember(member);
+
+		if (result > 0) {
+			// 200 OK
+			return ResponseEntity.ok("회원가입이 성공");
+		} else {
+			// 400
+			return ResponseEntity.badRequest().body("회원가입 실패");
+		}
+	}
 
 }
