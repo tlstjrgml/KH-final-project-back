@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.moa.backend.member.model.mapper.MemberMapper">
+	<!--selectKey를 통하여 시퀀스값을 받고 memberId에 저장후 insert-->
 	<insert id="insertMember">
-		INSERT INTO MEMBER (
+		<selectKey keyProperty="memberId" resultType="Long" order="BEFORE">
+			SELECT SEQ_MEMBER.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO MEMBER(
 			MEMBER_ID, EMAIL, PASSWORD, KAKAO_ID, LOGIN_TYPE, MEMBER_STATUS, IS_ADMIN, SIGNUP_DATE, NICKNAME
-		) VALUES (
-			SEQ_MEMBER.NEXTVAL, #{email}, #{password}, #{kakaoId}, #{loginType}, 'ACTIVE', 'N', SYSDATE, #{nickname}
+		)VALUES(
+			#{memberId}, #{email}, #{password}, #{kakaoId}, #{loginType}, 'ACTIVE', 'N', SYSDATE, #{nickname}
 		)
 	</insert>
 	
+	<!--카카오 아이디로 회원 조회-->
 	<select id="findByKakaoId" resultType="Member">
 		SELECT * FROM MEMBER WHERE KAKAO_ID=#{kakaoId}
 	</select>
+	
+	<!--member_detail테이블에 카카오에서 받아온 member_id랑 profile_img insert-->
+	<insert id="insertMemberDetail">
+		INSERT INTO MEMBER_DETAIL(MEMBER_ID, PROFILE_IMG) VALUES(#{memberId}, #{profileImg})
+	</insert>
 </mapper>

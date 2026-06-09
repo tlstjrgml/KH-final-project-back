@@ -101,6 +101,8 @@ public class MemberController {
 			return ResponseEntity.badRequest().body("회원가입 실패");
 		}
 	}
+	
+	
 
 	// 인증 이메일 요청
 	@PostMapping("/echeck")
