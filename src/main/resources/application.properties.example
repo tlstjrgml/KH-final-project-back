@@ -15,6 +15,7 @@ mybatis.type-aliases-package=com.moa.backend.*.model.vo
 # Server Port
 server.port=8080
 
+
 # Kakao OAuth2 Registration
 spring.security.oauth2.client.registration.kakao.authorization-grant-type=authorization_code
 spring.security.oauth2.client.registration.kakao.client-id=YOUR_KAKAO_CLIENT_ID
@@ -29,3 +30,12 @@ spring.security.oauth2.client.provider.kakao.authorization-uri=https://kauth.kak
 spring.security.oauth2.client.provider.kakao.token-uri=https://kauth.kakao.com/oauth/token
 spring.security.oauth2.client.provider.kakao.user-info-uri=https://kapi.kakao.com/v2/user/me
 spring.security.oauth2.client.provider.kakao.user-name-attribute=id
+
+#mail
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.host=
+spring.mail.port=
+spring.mail.username=
+spring.mail.password=
+moa.secret.email-key=
+
