@@ -71,5 +71,7 @@ public class MemberController {
 			return ResponseEntity.badRequest().body("회원가입 실패");
 		}
 	}
+	
+	
 
 }

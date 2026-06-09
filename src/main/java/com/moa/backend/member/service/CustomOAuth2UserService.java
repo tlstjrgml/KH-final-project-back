@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import com.moa.backend.member.service.MemberService;
 import com.moa.backend.member.model.vo.Member;
+import com.moa.backend.member.model.vo.MemberDetail;
 @Service
 @RequiredArgsConstructor
 
@@ -32,12 +33,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		
 		if(existMember == null) {
 			Member newMember = new Member();
-			mService.insertMember(newMember);
 			newMember.setKakaoId(kakaoId.toString());
 			newMember.setNickname(nickname);
 			newMember.setLoginType("KAKAO");
+			mService.insertMember(newMember);
 			
-			
+			MemberDetail MD = new MemberDetail();
+			MD.setMemberId(newMember.getMemberId());
+			MD.setProfileImg(profileImg);
+			mService.insertMemberDetail(MD);
 		}else {
 			
 		}

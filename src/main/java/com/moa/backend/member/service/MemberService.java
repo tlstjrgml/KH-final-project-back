@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.moa.backend.member.model.mapper.MemberMapper;
 import com.moa.backend.member.model.vo.Member;
+import com.moa.backend.member.model.vo.MemberDetail;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,5 +20,8 @@ public class MemberService {
 	public Member findByKakaoId(Long kakaoId) {
 		return mapper.findByKakaoId(kakaoId);
 	}
-
+	
+	public int insertMemberDetail(MemberDetail MD) {
+		return mapper.insertMemberDetail(MD);
+	}
 }
