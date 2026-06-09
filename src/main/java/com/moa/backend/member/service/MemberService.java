@@ -15,5 +15,9 @@ public class MemberService {
 	public int insertMember(Member m) {
 		return mapper.insertMember(m);
 	}
+	
+	public Member findByKaKaoId(Long kakaoId) {
+		return mapper.findByKaKaoId(kakaoId);
+	}
 
 }
