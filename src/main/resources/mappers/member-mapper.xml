@@ -22,4 +22,8 @@
 	<insert id="insertMemberDetail">
 		INSERT INTO MEMBER_DETAIL(MEMBER_ID, PROFILE_IMG) VALUES(#{memberId}, #{profileImg})
 	</insert>
+	<!--토큰 검증 과정에서 사용함-->
+	<select id="findByMemberId" resultType="Member">
+		SELECT * FROM MEMBER WHERE MEMBER_ID=#{memberId}
+	</select>
 </mapper>
