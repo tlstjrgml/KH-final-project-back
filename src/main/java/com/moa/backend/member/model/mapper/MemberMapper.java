@@ -11,4 +11,6 @@ public interface MemberMapper {
 	Member findByKakaoId(Long kakaoId);
 	
 	int insertMemberDetail(MemberDetail md);
+	
+	Member findByMemberId(Long memberId);
 }
