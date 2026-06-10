@@ -13,4 +13,6 @@ public interface MemberMapper {
 	int insertMemberDetail(MemberDetail md);
 	
 	Member findByMemberId(Long memberId);
+	
+	Member findByEmail(String email);
 }

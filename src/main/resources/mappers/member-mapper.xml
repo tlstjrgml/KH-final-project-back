@@ -26,4 +26,9 @@
 	<select id="findByMemberId" resultType="Member">
 		SELECT * FROM MEMBER WHERE MEMBER_ID=#{memberId}
 	</select>
+	
+	<!--로그인 -->
+	<select id="findByEmail" resultType="Member">
+		SELECT * FROM MEMBER WHERE EMAIL=#{email}
+	</select>
 </mapper>
