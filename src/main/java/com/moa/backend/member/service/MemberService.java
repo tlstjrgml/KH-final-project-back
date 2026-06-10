@@ -24,4 +24,8 @@ public class MemberService {
 	public int insertMemberDetail(MemberDetail MD) {
 		return mapper.insertMemberDetail(MD);
 	}
+	
+	public Member login(String email) {
+		return mapper.findByEmail(email);
+	}
 }

@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moa.backend.common.util.EmailAuthProvider;
-import com.moa.backend.member.model.vo.Member;
-import com.moa.backend.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
+import com.moa.backend.common.config.jwt.JwtProvider;
+import com.moa.backend.member.model.vo.Member;
+import com.moa.backend.member.service.MemberService;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +25,8 @@ public class MemberController {
 	private final MemberService mService;
 	private final BCryptPasswordEncoder bcrypt;
 	private final EmailAuthProvider authProvider;
-
+	private final JwtProvider jwtProvider; 
+	
 	// 테스트용 http://localhost:8080/member/test-insert
 	@GetMapping("/test-insert")
 	public String testInsert() {
@@ -186,6 +188,19 @@ public class MemberController {
 			responseBody.put("success", false);
 			responseBody.put("message", "인증번호가 일치하지 않거나 올바르지 않은 접근입니다.");
 			return ResponseEntity.badRequest().body(responseBody);
+		}
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody Map<String, String>request){
+		String email = request.get("email");
+		Member member = mService.login(email);
+		if(bcrypt.matches(request.get("password"), member.getPassword())) {
+			
+			String token = jwtProvider.generateToken(member.getMemberId());
+			return ResponseEntity.ok(token);
+		}else {
+			return ResponseEntity.badRequest().body("아이디 또는 비밀번호가 일치하지 않습니다. 다시 시도해주세요");
 		}
 	}
 }
