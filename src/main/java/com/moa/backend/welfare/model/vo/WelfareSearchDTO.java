@@ -18,7 +18,5 @@ public class WelfareSearchDTO {
     private String income;     
     private String job;        
     private String keyword;    
-    private int page;          
-    private int pageSize;      
-    private String sort;       
+    private int page;            
 }

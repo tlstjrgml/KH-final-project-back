@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moa.backend.welfare.model.mapper.WelfareMapper">
+
+    <insert id="insertWelfare" parameterType="com.moa.backend.welfare.model.vo.Welfare">
+        INSERT INTO WELFARE (
+            PLCY_NO, LCLSF_NM, MCLSF_NM,MRG_STTS_CD,SCHOOL_CD,PLCY_MAJOR_CD,JOB_CD,SBIZ_CD,SPRT_TRGT_MIN_AGE,
+            SPRT_TRGT_MAX_AGE,SPRT_TRGT_AGE_LMT_YN,EARN_MIN_AMT,EARN_MAX_AMT,EARN_ETC_CN,FULL_DATA
+        ) VALUES (
+            #{plcyNo},#{lclsfNm},#{mclsfNm},#{mrgSttsCd},#{schoolCd},#{plcyMajorCd},#{jobCd},#{sbizCd},#{sprtTrgtMinAge},
+            #{sprtTrgtMaxAge},#{sprtTrgtAgeLmtYn},#{earnMinAmt},#{earnMaxAmt},#{earnEtcCn},#{fullData}
+        )
+    </insert>
+
+</mapper>

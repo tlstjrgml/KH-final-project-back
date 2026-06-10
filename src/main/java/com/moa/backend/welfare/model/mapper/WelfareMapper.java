@@ -1,5 +1,10 @@
 package com.moa.backend.welfare.model.mapper;
 
-public class WelfareMapper {
+import org.apache.ibatis.annotations.Mapper;
 
+import com.moa.backend.welfare.model.vo.Welfare;
+
+@Mapper
+public interface WelfareMapper {
+    void insertWelfare(Welfare vo);
 }
