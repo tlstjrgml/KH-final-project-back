@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.moa.backend.board.model.mapper.BoardMapper">
+
+
+	<insert id="insertBoard" parameterType="Board">
+
+		<selectKey keyProperty="boardId" resultType="long"
+			order="BEFORE">
+			SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO BOARD (
+			BOARD_ID, BOARD_TITLE,
+			BOARD_CONTENT,
+			BOARD_TYPE,
+			MEMBER_ID,
+			WELFARE_ID
+		) VALUES (
+			#{boardId}, #{boardTitle},
+			#{boardContent},
+			#{boardType},
+			#{memberId},
+			#{welfareId} 
+		)
+	</insert>
+
+</mapper>
