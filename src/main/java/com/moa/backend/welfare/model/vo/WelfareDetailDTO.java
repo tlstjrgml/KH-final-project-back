@@ -18,13 +18,14 @@ public class WelfareDetailDTO {
     private String plcyNm;
     private String sprvsnInstCdNm;
     private String lastMdfcnDt;
-    private String sprtTrgt;
+    private String sprtTrgtMinAge;
+    private String sprtTrgtMaxAge;
+    private String ptcpPrpTrgtCn;
     private String earnEtcCn;
     private String plcySprtCn;
     private String aplyYmd;
     private String plcyAplyMthdCn;
-    private String contact;
-    private String plcyExplnCn;
     private String srngMthdCn;
     private String aplyUrlAddr;
+    private String plcyExplnCn;
 }
