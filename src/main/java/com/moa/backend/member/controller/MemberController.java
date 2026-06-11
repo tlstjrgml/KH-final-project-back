@@ -195,6 +195,10 @@ public class MemberController {
 	public ResponseEntity<?> login(@RequestBody Map<String, String>request){
 		String email = request.get("email");
 		Member member = mService.login(email);
+		
+		if (member == null) {
+		    return ResponseEntity.badRequest().body("존재하지 않는 이메일입니다.");
+		}
 		if(bcrypt.matches(request.get("password"), member.getPassword())) {
 			
 			String token = jwtProvider.generateToken(member.getMemberId());
