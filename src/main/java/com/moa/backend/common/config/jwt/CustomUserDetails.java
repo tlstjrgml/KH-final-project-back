@@ -54,6 +54,10 @@ public class CustomUserDetails implements UserDetails{
 		return true;
 	}
 	
+	// Long타입으로 memberId 반환하는 메서드
+	public Long getMemberId() {
+		return member.getMemberId();
+	}
 	
 	
 }
