@@ -15,6 +15,7 @@ import com.moa.backend.welfare.model.vo.WelfareListDTO;
 import com.moa.backend.welfare.service.WelfareService;
 
 import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/welfare")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -32,18 +33,26 @@ public class WelfareController {
     public List<WelfareListDTO> getTopten() {
         return welfareService.getTopten();
     }
-    
+
     @GetMapping("/detail/{id}")
     public WelfareDetailDTO getWelfareDetail(@PathVariable("id") Long id) {
         return welfareService.getWelfareDetail(id);
     }
-    
+
     @GetMapping("/list")
     public Map<String, Object> getWelfareList(
         @RequestParam(name = "keyword", defaultValue = "") String keyword,
-        @RequestParam(name = "lclsfNm", defaultValue = "") String lclsfNm,
+        @RequestParam(name = "lclsfNm", defaultValue = "") List<String> lclsfNm,
         @RequestParam(name = "page", defaultValue = "1") int page
     ) {
         return welfareService.getWelfareList(keyword, lclsfNm, page);
+    }
+    
+    @GetMapping("/related")
+    public List<WelfareListDTO> getRelatedWelfare(
+        @RequestParam(name = "lclsfNm") String lclsfNm,
+        @RequestParam(name = "excludeId") Long excludeId
+    ) {
+        return welfareService.getRelatedWelfare(lclsfNm, excludeId);
     }
 }
