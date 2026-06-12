@@ -26,4 +26,20 @@
 		)
 	</insert>
 
+	<select id="selectBoard" resultType="Board">
+		select * from board 
+		join member using (member_id)
+		where board_status = 'Y'
+		order  by board_id desc
+	</select>
+
+	<select id="getListCount" resultType="_int">
+		select count(*)
+		from board
+		where board_type =#{boardType} and board_status='Y'
+	</select>
+	
+
+	
+
 </mapper>
