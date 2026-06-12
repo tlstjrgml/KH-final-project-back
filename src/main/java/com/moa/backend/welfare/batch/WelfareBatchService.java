@@ -61,7 +61,7 @@ public class WelfareBatchService {
                         vo.setEarnMaxAmt(node.path("earnMaxAmt").asLong());
                         vo.setEarnEtcCn(node.path("earnEtcCn").asText());
                         vo.setFullData(node.toString());
-                        welfareMapper.insertWelfare(vo);
+                        welfareMapper.mergeWelfare(vo);
                     } catch (Exception e) {
                         System.out.println("스킵: " + node.path("plcyNo").asText() + " - " + e.getMessage());
                     }

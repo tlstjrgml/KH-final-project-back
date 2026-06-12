@@ -37,8 +37,10 @@ public class SecurityConfig {
                 })
             )
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-            )
+            	    .requestMatchers("/admin/**").hasRole("ADMIN")
+            	    .anyRequest().permitAll()
+            	)
+            
             .csrf(csrf -> csrf.disable())
             .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo
