@@ -201,7 +201,7 @@ public class MemberController {
 		}
 		if(bcrypt.matches(request.get("password"), member.getPassword())) {
 			
-			String token = jwtProvider.generateToken(member.getMemberId());
+			String token = jwtProvider.generateToken(member.getMemberId(), member.getIsAdmin());
 			return ResponseEntity.ok(token);
 		}else {
 			return ResponseEntity.badRequest().body("아이디 또는 비밀번호가 일치하지 않습니다. 다시 시도해주세요");
