@@ -9,4 +9,9 @@ public interface BoardMapper {
 
 	void insertBoard(Board board);
 
+	List<Board> selectBoard();
+
+	int getListCount(int i);
+	
+
 }
