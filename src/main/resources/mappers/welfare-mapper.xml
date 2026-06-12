@@ -4,14 +4,22 @@
 
 <mapper namespace="com.moa.backend.welfare.model.mapper.WelfareMapper">
 
-    <insert id="insertWelfare" parameterType="com.moa.backend.welfare.model.vo.Welfare">
-        INSERT INTO WELFARE (
-            PLCY_NO, LCLSF_NM, MCLSF_NM,MRG_STTS_CD,SCHOOL_CD,PLCY_MAJOR_CD,JOB_CD,SBIZ_CD,SPRT_TRGT_MIN_AGE,
-            SPRT_TRGT_MAX_AGE,SPRT_TRGT_AGE_LMT_YN,EARN_MIN_AMT,EARN_MAX_AMT,EARN_ETC_CN,FULL_DATA
-        ) VALUES (
-            #{plcyNo},#{lclsfNm},#{mclsfNm},#{mrgSttsCd},#{schoolCd},#{plcyMajorCd},#{jobCd},#{sbizCd},#{sprtTrgtMinAge},
-            #{sprtTrgtMaxAge},#{sprtTrgtAgeLmtYn},#{earnMinAmt},#{earnMaxAmt},#{earnEtcCn},#{fullData}
-        )
+    <insert id="mergeWelfare" parameterType="com.moa.backend.welfare.model.vo.Welfare">
+        MERGE INTO WELFARE W USING DUAL ON (W.PLCY_NO = #{plcyNo})
+		WHEN MATCHED THEN
+		    UPDATE SET
+		    W.LCLSF_NM = #{lclsfNm}, W.MCLSF_NM = #{mclsfNm}, W.MRG_STTS_CD = #{mrgSttsCd}, W.SCHOOL_CD = #{schoolCd},
+		    W.PLCY_MAJOR_CD = #{plcyMajorCd}, W.JOB_CD = #{jobCd}, W.SBIZ_CD = #{sbizCd}, W.SPRT_TRGT_MIN_AGE = #{sprtTrgtMinAge},
+		    W.SPRT_TRGT_MAX_AGE = #{sprtTrgtMaxAge}, W.SPRT_TRGT_AGE_LMT_YN = #{sprtTrgtAgeLmtYn}, W.EARN_MIN_AMT = #{earnMinAmt},
+		    W.EARN_MAX_AMT = #{earnMaxAmt}, W.EARN_ETC_CN = #{earnEtcCn}, W.FULL_DATA = #{fullData}
+		WHEN NOT MATCHED THEN
+		    INSERT (PLCY_NO, LCLSF_NM, MCLSF_NM, MRG_STTS_CD, SCHOOL_CD, PLCY_MAJOR_CD,
+		            JOB_CD, SBIZ_CD, SPRT_TRGT_MIN_AGE, SPRT_TRGT_MAX_AGE, SPRT_TRGT_AGE_LMT_YN,
+		            EARN_MIN_AMT, EARN_MAX_AMT, EARN_ETC_CN, FULL_DATA)
+		    VALUES(#{plcyNo}, #{lclsfNm}, #{mclsfNm}, #{mrgSttsCd}, #{schoolCd}, #{plcyMajorCd},
+		           #{jobCd}, #{sbizCd}, #{sprtTrgtMinAge}, #{sprtTrgtMaxAge}, #{sprtTrgtAgeLmtYn},
+		           #{earnMinAmt}, #{earnMaxAmt}, #{earnEtcCn}, #{fullData})    
+        
     </insert>
     
     <select id="getMainWelfare" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">

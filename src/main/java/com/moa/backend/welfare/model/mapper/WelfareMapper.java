@@ -13,7 +13,7 @@ import com.moa.backend.welfare.model.vo.WelfareSearchDTO;
 @Mapper
 public interface WelfareMapper {
  
-	void insertWelfare(Welfare vo);
+	void mergeWelfare (Welfare vo);
 
 	List<WelfareListDTO> getMainWelfare();
 
