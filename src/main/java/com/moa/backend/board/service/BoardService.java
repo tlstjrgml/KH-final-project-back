@@ -16,4 +16,13 @@ public class BoardService {
 		mapper.insertBoard(board);
 		return board;
 	}
+
+	public List<Board> selectBoard() {
+		return mapper.selectBoard();
+	}
+
+	public int getListCount(int i) {
+		return mapper.getListCount(i);
+	}
+
 }
