@@ -31,7 +31,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     //카카오아이디로 데이터베이스에서 회원 조회 
     Long memberId = member.getMemberId();
     //jwt토큰 발급 
-    String token = jwtProvider.generateToken(memberId);
+    String token = jwtProvider.generateToken(memberId, member.getIsAdmin());
     //토큰을 쿼리스트링에 담다 리다이렉
     response.sendRedirect("http://localhost:5173/?token=" + token);
     }
