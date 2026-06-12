@@ -16,38 +16,41 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class WelfareService {
-	
-	private final WelfareMapper mapper;
 
-	public List<WelfareListDTO> getMainWelfare() {
-		return mapper.getMainWelfare();
+    private final WelfareMapper mapper;
+
+    public List<WelfareListDTO> getMainWelfare() {
+        return mapper.getMainWelfare();
+    }
+
+    public List<WelfareListDTO> getTopten() {
+        return mapper.getTopten();
+    }
+
+    public WelfareDetailDTO getWelfareDetail(Long id) {
+        return mapper.getWelfareDetail(id);
+    }
+
+    public Map<String, Object> getWelfareList(String keyword, List<String> lclsfNm, int page) {
+        int pageSize = 14;
+        int offset = (page - 1) * pageSize;
+
+        WelfareSearchDTO params = new WelfareSearchDTO();
+        params.setKeyword(keyword);
+        params.setLclsfNm(lclsfNm);
+        params.setPage(offset);
+
+        List<WelfareListDTO> list = mapper.getWelfareList(params);
+        int total = mapper.getWelfareCount(params);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", total);
+        result.put("totalPages", (int) Math.ceil((double) total / pageSize));
+        return result;
+    }
+
+	public List<WelfareListDTO> getRelatedWelfare(String lclsfNm, Long excludeId) {
+		return mapper.getRelatedWelfare(lclsfNm, excludeId);
 	}
-
-	public List<WelfareListDTO> getTopten() {
-		return mapper.getTopten();
-	}
-
-	public WelfareDetailDTO getWelfareDetail(Long id) {
-		return mapper.getWelfareDetail(id);
-	}
-
-	public Map<String, Object> getWelfareList(String keyword, String lclsfNm, int page) {
-	    int pageSize = 14;
-	    int offset = (page - 1) * pageSize;
-
-	    WelfareSearchDTO params = new WelfareSearchDTO();
-	    params.setKeyword(keyword);
-	    params.setLclsfNm(lclsfNm);
-	    params.setPage(offset);
-
-	    List<WelfareListDTO> list = mapper.getWelfareList(params);
-	    int total = mapper.getWelfareCount(params);
-
-	    Map<String, Object> result = new HashMap<>();
-	    result.put("list", list);
-	    result.put("total", total);
-	    result.put("totalPages", (int) Math.ceil((double) total / pageSize));
-	    return result;
-	}
-
 }
