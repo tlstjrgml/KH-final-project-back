@@ -26,6 +26,12 @@ public class BoardService {
 //		return mapper.selectBoard();
 //	}
 
+//
+//	public int getListCount(int i) {
+//		return mapper.getListCount(i);
+//	}
+
+
 	public int getListCount(int i) {
 		return boardMapper.getListCount(i);
 	}
@@ -59,5 +65,6 @@ public class BoardService {
 
 		return dto;
 	}
+
 
 }

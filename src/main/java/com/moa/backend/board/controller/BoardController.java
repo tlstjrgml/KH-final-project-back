@@ -36,16 +36,22 @@ public class BoardController {
 	}
 
 //	@GetMapping("/list")
-//	public ResponseEntity<?> listBoard(@RequestParam(value = "page", defaultValue = "1") int currentPage) {
+//    public ResponseEntity<?> listBoard(
+//            @RequestParam(value = "page", defaultValue = "1")
+//            int currentPage) {
 //
-//		int listCount = bService.getListCount(2);
+//        int listCount = bService.getListCount(2);
 //
-//		PageInfo pi = Pagination.getPageInfo(currentPage, listCount, 10);
+//        PageInfo pi = Pagination.getPageInfo(
+//                currentPage,
+//                listCount,
+//                10
+//        );
 //
-//		List<Board> boardList = bService.selectBoard();
+//        List<Board> boardList = bService.selectBoard();
 //
-//		return ResponseEntity.ok(boardList);
-//	}
+//        return ResponseEntity.ok(boardList);
+//    }
 
 	// 게시글 상세 조회
 	@GetMapping("/{boardId}")

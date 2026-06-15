@@ -39,20 +39,25 @@ public class WelfareController {
         return welfareService.getWelfareDetail(id);
     }
 
-    @GetMapping("/list")
-    public Map<String, Object> getWelfareList(
-        @RequestParam(name = "keyword", defaultValue = "") String keyword,
-        @RequestParam(name = "lclsfNm", defaultValue = "") List<String> lclsfNm,
-        @RequestParam(name = "page", defaultValue = "1") int page
-    ) {
-        return welfareService.getWelfareList(keyword, lclsfNm, page);
-    }
-    
     @GetMapping("/related")
     public List<WelfareListDTO> getRelatedWelfare(
         @RequestParam(name = "lclsfNm") String lclsfNm,
         @RequestParam(name = "excludeId") Long excludeId
     ) {
         return welfareService.getRelatedWelfare(lclsfNm, excludeId);
+    }
+
+    @GetMapping("/list")
+    public Map<String, Object> getWelfareList(
+        @RequestParam(name = "keyword", defaultValue = "") String keyword,
+        @RequestParam(name = "lclsfNm", defaultValue = "") List<String> lclsfNm,
+        @RequestParam(name = "region", defaultValue = "") List<String> region,
+        @RequestParam(name = "ageMin", defaultValue = "0") int ageMin,
+        @RequestParam(name = "ageMax", defaultValue = "0") int ageMax,
+        @RequestParam(name = "income", defaultValue = "") List<String> income,
+        @RequestParam(name = "job", defaultValue = "") List<String> job,
+        @RequestParam(name = "page", defaultValue = "1") int page
+    ) {
+        return welfareService.getWelfareList(keyword, lclsfNm, region, ageMin, ageMax, income, job, page);
     }
 }
