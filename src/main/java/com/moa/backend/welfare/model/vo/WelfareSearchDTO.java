@@ -14,10 +14,11 @@ import lombok.ToString;
 @NoArgsConstructor
 public class WelfareSearchDTO {
     private List<String> lclsfNm;
-    private String region;
-    private String age;
-    private String income;
-    private String job;
+    private List<String> region;
+    private List<String> income;
+    private List<String> job;
     private String keyword;
     private int page;
+    private int ageMin;
+    private int ageMax;
 }

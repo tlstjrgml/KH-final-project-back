@@ -17,12 +17,12 @@ public class BoardService {
 		return board;
 	}
 
-	public List<Board> selectBoard() {
-		return mapper.selectBoard();
-	}
-
-	public int getListCount(int i) {
-		return mapper.getListCount(i);
-	}
+//	public List<Board> selectBoard() {
+//		return mapper.selectBoard();
+//	}
+//
+//	public int getListCount(int i) {
+//		return mapper.getListCount(i);
+//	}
 
 }

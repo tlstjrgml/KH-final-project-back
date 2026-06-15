@@ -31,22 +31,22 @@ public class BoardController {
 		return ResponseEntity.ok(savedBoard);
 	}
 
-	@GetMapping("/list")
-    public ResponseEntity<?> listBoard(
-            @RequestParam(value = "page", defaultValue = "1")
-            int currentPage) {
-
-        int listCount = bService.getListCount(2);
-
-        PageInfo pi = Pagination.getPageInfo(
-                currentPage,
-                listCount,
-                10
-        );
-
-        List<Board> boardList = bService.selectBoard();
-
-        return ResponseEntity.ok(boardList);
-    }
+//	@GetMapping("/list")
+//    public ResponseEntity<?> listBoard(
+//            @RequestParam(value = "page", defaultValue = "1")
+//            int currentPage) {
+//
+//        int listCount = bService.getListCount(2);
+//
+//        PageInfo pi = Pagination.getPageInfo(
+//                currentPage,
+//                listCount,
+//                10
+//        );
+//
+//        List<Board> boardList = bService.selectBoard();
+//
+//        return ResponseEntity.ok(boardList);
+//    }
 
 }
