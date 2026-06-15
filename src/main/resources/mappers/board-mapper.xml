@@ -38,8 +38,42 @@
 		from board
 		where board_type =#{boardType} and board_status='Y'
 	</select>
-	
 
+	<update id="updateViews" parameterType="long">
+		UPDATE BOARD
+		SET VIEWS = VIEWS + 1
+		WHERE BOARD_ID = #{boardId}
+			AND BOARD_STATUS = 'Y'
+	</update>
 	
-
+	<select id="selectBoardDetail" parameterType="long" resultType="BoardDetailResponseDTO">
+        SELECT 
+            B.BOARD_ID          AS boardId,
+            B.BOARD_TITLE       AS boardTitle,
+            B.BOARD_CONTENT     AS boardContent,
+            B.BOARD_TYPE        AS boardType,
+            B.BOARD_STATUS      AS boardStatus,
+            B.CREATE_DATE       AS createDate,
+            B.MODIFY_DATE       AS modifyDate,
+            B.VIEWS             AS views,
+            B.MEMBER_ID         AS memberId,
+            B.WELFARE_ID        AS welfareId,
+            
+            M.NICKNAME   AS writerNickname, -- 1. 작성자 닉네임 가져오기
+            NVL(L.LIKE_COUNT, 0) AS likeCount       -- 2. 좋아요 개수 (없으면 0개 처리)
+        FROM BOARD B
+        
+        -- [JOIN 1] 작성자 닉네임을 가져오기 위한 MEMBER 테이블 조인
+        JOIN MEMBER M ON (B.MEMBER_ID = M.MEMBER_ID)
+        
+        -- [JOIN 2] 게시글별 좋아요 총 개수를 미리 세어둔 서브쿼리와 조인 (LEFT JOIN 필수!)
+        LEFT JOIN (
+            SELECT BOARD_ID, COUNT(*) AS LIKE_COUNT
+            FROM LIKES
+            GROUP BY BOARD_ID
+        ) L ON (B.BOARD_ID = L.BOARD_ID)
+        
+        WHERE B.BOARD_ID = #{boardId}
+          AND B.BOARD_STATUS = 'Y'
+	</select>
 </mapper>
