@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
-	// 테스튼
+	// 테스트
 	private final BoardService bService;
 
 	@PostMapping("/write")
