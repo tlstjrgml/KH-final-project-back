@@ -2,6 +2,7 @@ package com.moa.backend.board.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
-
+	// 테스튼
 	private final BoardService bService;
-	
+
 	@PostMapping("/write")
 	public ResponseEntity<?> writeBoard(@RequestBody Board board,
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -32,21 +33,15 @@ public class BoardController {
 	}
 
 	@GetMapping("/list")
-    public ResponseEntity<?> listBoard(
-            @RequestParam(value = "page", defaultValue = "1")
-            int currentPage) {
+	public ResponseEntity<?> listBoard(@RequestParam(value = "page", defaultValue = "1") int currentPage) {
 
-        int listCount = bService.getListCount(2);
+		int listCount = bService.getListCount(2);
 
-        PageInfo pi = Pagination.getPageInfo(
-                currentPage,
-                listCount,
-                10
-        );
+		PageInfo pi = Pagination.getPageInfo(currentPage, listCount, 10);
 
-        List<Board> boardList = bService.selectBoard();
+		List<Board> boardList = bService.selectBoard();
 
-        return ResponseEntity.ok(boardList);
-    }
+		return ResponseEntity.ok(boardList);
+	}
 
 }
