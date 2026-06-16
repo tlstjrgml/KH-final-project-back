@@ -1,4 +1,4 @@
-package com.moa.backend.welfare.model.vo;
+package com.moa.backend.wish.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,11 +11,8 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class WelfareListDTO {
+public class Wish {
     private Long welfareId;
-    private String lclsfNm;
-    private String plcyNm;
-    private String aplyYmd;
-    private String sprvsnInstCdNm;
-    private int wishCount;
+    private Long memberId;
+    private String wishDate;
 }

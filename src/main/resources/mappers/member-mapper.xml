@@ -31,4 +31,10 @@
 	<select id="findByEmail" resultType="Member">
 		SELECT * FROM MEMBER WHERE EMAIL=#{email}
 	</select>
+	
+	<!-- 현재 로그인한 사용자 정보 조회 -->
+	<select id="getMember" parameterType="Long" resultType="com.moa.backend.member.model.vo.Member">
+   	 SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
+	</select>
+	
 </mapper>
