@@ -93,4 +93,42 @@
 		WHERE BOARD_ID = #{boardId}
 			AND BOARD_STATUS = 'Y'
 	</update>
+	
+	<select id="selectBoardCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD
+        WHERE BOARD_STATUS = 'Y'
+        <if test="boardType != null and boardType != ''">
+            AND BOARD_TYPE = #{boardType}
+        </if>
+    </select>
+    
+    <select id="selectBoardListWithPaging" 
+            parameterType="com.moa.backend.common.util.page.PageRequest" 
+            resultType="BoardListResponseDTO">
+        SELECT 
+            B.BOARD_ID,
+            B.BOARD_TITLE,
+            B.BOARD_TYPE,
+            B.VIEWS,
+            B.CREATE_DATE,
+            M.NICKNAME AS writerNickname,
+            NVL(L.LIKE_COUNT, 0) AS likeCount
+        FROM BOARD B
+        JOIN MEMBER M ON (B.MEMBER_ID = M.MEMBER_ID)
+        LEFT JOIN (
+            SELECT BOARD_ID, COUNT(*) AS LIKE_COUNT
+            FROM LIKES
+            GROUP BY BOARD_ID
+        ) L ON (B.BOARD_ID = L.BOARD_ID)
+        WHERE B.BOARD_STATUS = 'Y'
+        <if test="boardType != null and boardType != ''">
+            AND B.BOARD_TYPE = #{boardType}
+        </if>
+        ORDER BY B.BOARD_ID DESC -- 최신 글이 맨 위로 오도록 정렬
+        
+        OFFSET #{offset} ROWS
+        FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
 </mapper>
