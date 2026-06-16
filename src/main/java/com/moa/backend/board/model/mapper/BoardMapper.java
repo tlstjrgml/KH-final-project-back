@@ -10,6 +10,7 @@ public interface BoardMapper {
 
 	void insertBoard(Board board);
 
+	int getListCount(int i);
 //	List<Board> selectBoard();
 //
 //	int getListCount(int i);
@@ -19,6 +20,9 @@ public interface BoardMapper {
 
 	BoardDetailResponseDTO selectBoardDetail(Long boardId);
 
+	int deleteBoard(Long boardId);
+
+	int updateBoard(Board updateData);
 	
 
 }
