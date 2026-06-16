@@ -31,13 +31,22 @@ public class WelfareService {
         return mapper.getWelfareDetail(id);
     }
 
-    public Map<String, Object> getWelfareList(String keyword, List<String> lclsfNm, int page) {
+    public List<WelfareListDTO> getRelatedWelfare(String lclsfNm, Long excludeId) {
+        return mapper.getRelatedWelfare(lclsfNm, excludeId);
+    }
+
+    public Map<String, Object> getWelfareList(String keyword, List<String> lclsfNm, List<String> region, int ageMin, int ageMax, List<String> income, List<String> job, int page) {
         int pageSize = 14;
         int offset = (page - 1) * pageSize;
 
         WelfareSearchDTO params = new WelfareSearchDTO();
         params.setKeyword(keyword);
         params.setLclsfNm(lclsfNm);
+        params.setRegion(region);
+        params.setAgeMin(ageMin);
+        params.setAgeMax(ageMax);
+        params.setIncome(income);
+        params.setJob(job);
         params.setPage(offset);
 
         List<WelfareListDTO> list = mapper.getWelfareList(params);
@@ -49,8 +58,4 @@ public class WelfareService {
         result.put("totalPages", (int) Math.ceil((double) total / pageSize));
         return result;
     }
-
-	public List<WelfareListDTO> getRelatedWelfare(String lclsfNm, Long excludeId) {
-		return mapper.getRelatedWelfare(lclsfNm, excludeId);
-	}
 }

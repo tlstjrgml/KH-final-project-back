@@ -11,6 +11,10 @@ public interface BoardMapper {
 	void insertBoard(Board board);
 
 	int getListCount(int i);
+//	List<Board> selectBoard();
+//
+//	int getListCount(int i);
+
 
 	void updateViews(Long boardId);
 
