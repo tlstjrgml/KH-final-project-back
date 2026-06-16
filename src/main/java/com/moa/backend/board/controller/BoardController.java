@@ -3,9 +3,11 @@ package com.moa.backend.board.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,4 +67,69 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류가 발생했습니다.");
 		}
 	}
+	
+	
+	// 게시글 삭제
+	@DeleteMapping("/{boardId}")
+	public ResponseEntity<?> deleteBoard(
+			@PathVariable("boardId") Long boardId,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		try {
+			// 로그인한 유저의 ID를 함께 넘겨서 본인 글인지 서비스에서 한 번 더 검증
+			bService.deleteBoard(boardId, userDetails.getMemberId());
+
+			return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
+		} catch (IllegalArgumentException e) {
+			// 본인 글이 아니거나 없는 글일 때 400 에러
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 오류가 발생했습니다.");
+		}
+	}
+	
+	// 게시글 수정
+	@PutMapping("/{boardId}")
+    public ResponseEntity<?> updateBoard(
+            @PathVariable("boardId") Long boardId,
+            @RequestBody Board updateData, // 수정할 제목과 내용이 담긴 객체
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        try {
+            updateData.setBoardId(boardId);
+            bService.updateBoard(updateData, userDetails.getMemberId());
+            return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
+		} catch (IllegalArgumentException e) {
+			// 본인 글이 아니거나 없는 글일 때 400 에러
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 중 오류가 발생했습니다.");
+		}
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

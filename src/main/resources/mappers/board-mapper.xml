@@ -76,4 +76,21 @@
         WHERE B.BOARD_ID = #{boardId}
           AND B.BOARD_STATUS = 'Y'
 	</select>
+
+	<update id="deleteBoard" parameterType="long">
+		UPDATE BOARD
+		SET BOARD_STATUS = 'N',
+			MODIFY_DATE = SYSDATE 
+		WHERE BOARD_ID = #{boardId}
+			AND BOARD_STATUS = 'Y'
+	</update>
+
+	<update id="updateBoard" parameterType="Board">
+		UPDATE BOARD
+		SET BOARD_TITLE = #{boardTitle},
+			BOARD_CONTENT = #{boardContent},
+			MODIFY_DATE = SYSDATE
+		WHERE BOARD_ID = #{boardId}
+			AND BOARD_STATUS = 'Y'
+	</update>
 </mapper>

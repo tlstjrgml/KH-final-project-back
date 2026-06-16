@@ -10,13 +10,15 @@ public interface BoardMapper {
 
 	void insertBoard(Board board);
 
-//	List<Board> selectBoard();
-
 	int getListCount(int i);
 
 	void updateViews(Long boardId);
 
 	BoardDetailResponseDTO selectBoardDetail(Long boardId);
+
+	int deleteBoard(Long boardId);
+
+	int updateBoard(Board updateData);
 	
 
 }

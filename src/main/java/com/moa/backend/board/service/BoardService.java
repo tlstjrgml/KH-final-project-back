@@ -60,4 +60,42 @@ public class BoardService {
 		return dto;
 	}
 
+	public void deleteBoard(Long boardId, Long memberId) {
+		// 1. 상세조회 때 썼던 매퍼 재활용해서 글 정보 가져오기
+		BoardDetailResponseDTO board = boardMapper.selectBoardDetail(boardId);
+
+		if (board == null) {
+			throw new IllegalArgumentException("존재하지 않거나 이미 삭제된 게시글입니다.");
+		}
+
+		// 2. 글 작성자 ID와 현재 로그인한 유저 ID가 일치하는지 확인
+		if (!board.getMemberId().equals(memberId)) {
+			throw new IllegalArgumentException("본인이 작성한 글만 삭제할 수 있습니다.");
+		}
+
+		// 3. 검증 통과 시 상태값 업데이트 때리기
+		int result = boardMapper.deleteBoard(boardId);
+		if (result == 0) {
+			throw new IllegalArgumentException("삭제 처리에 실패했습니다.");
+		}
+	}
+
+	public void updateBoard(Board updateData, Long loginMemberId) {
+		BoardDetailResponseDTO originBoard = boardMapper.selectBoardDetail(updateData.getBoardId());
+
+		if (originBoard == null) {
+			throw new IllegalArgumentException("존재하지 않거나 이미 삭제된 게시글입니다.");
+		}
+
+		// 2. 작성자 ID와 현재 로그인한 유저 ID 비교
+		if (!originBoard.getMemberId().equals(loginMemberId)) {
+			throw new IllegalArgumentException("본인이 작성한 글만 수정할 수 있습니다.");
+		}
+
+		// 3. 검증 통과 시 수정 처리 실행
+		int result = boardMapper.updateBoard(updateData);
+		if (result == 0) {
+			throw new IllegalArgumentException("수정 처리에 실패했습니다.");
+		}
+	}
 }

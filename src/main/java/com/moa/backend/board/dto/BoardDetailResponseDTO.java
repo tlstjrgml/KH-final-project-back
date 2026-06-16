@@ -30,5 +30,5 @@ public class BoardDetailResponseDTO {
     private Integer likeCount;		// 좋아요 수
     
     private Boolean isLiked; 		// 내가 좋아요 눌렀는지 여부
-    private Boolean isOwner;			// 작성자 여부
+    private Boolean isOwner;		// 작성자 여부
 }
