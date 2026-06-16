@@ -29,18 +29,25 @@
     </select>
 
     <select id="getTopten" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
-        SELECT * FROM (
-            SELECT
-                WELFARE_ID AS welfareId,
-                LCLSF_NM AS lclsfNm,
-                JSON_VALUE(FULL_DATA, '$.plcyNm') AS plcyNm,
-                JSON_VALUE(FULL_DATA, '$.aplyYmd') AS aplyYmd,
-                JSON_VALUE(FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm
-            FROM WELFARE
-            ORDER BY WELFARE_ID DESC
-        )
-        WHERE ROWNUM &lt;= 10
-    </select>
+	    SELECT *
+	    FROM (
+	        SELECT
+	            w.WELFARE_ID AS welfareId,
+	            w.LCLSF_NM AS lclsfNm,
+	            JSON_VALUE(w.FULL_DATA, '$.plcyNm') AS plcyNm,
+	            JSON_VALUE(w.FULL_DATA, '$.aplyYmd') AS aplyYmd,
+	            JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm,
+	            COUNT(wi.WELFARE_ID) AS wishCount
+	        FROM WELFARE w
+	        LEFT JOIN WISH wi ON w.WELFARE_ID = wi.WELFARE_ID
+	        GROUP BY w.WELFARE_ID, w.LCLSF_NM,
+	            JSON_VALUE(w.FULL_DATA, '$.plcyNm'),
+	            JSON_VALUE(w.FULL_DATA, '$.aplyYmd'),
+	            JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm')
+	        ORDER BY wishCount DESC, w.WELFARE_ID DESC
+	    )
+	    WHERE ROWNUM &lt;= 10
+ </select>
 
     <select id="getWelfareDetail" parameterType="Long" resultType="com.moa.backend.welfare.model.vo.WelfareDetailDTO">
         SELECT
@@ -58,7 +65,8 @@
             JSON_VALUE(FULL_DATA, '$.plcyAplyMthdCn') AS plcyAplyMthdCn,
             JSON_VALUE(FULL_DATA, '$.srngMthdCn') AS srngMthdCn,
             JSON_VALUE(FULL_DATA, '$.aplyUrlAddr') AS aplyUrlAddr,
-            JSON_VALUE(FULL_DATA, '$.plcyExplnCn') AS plcyExplnCn
+            JSON_VALUE(FULL_DATA, '$.plcyExplnCn') AS plcyExplnCn,
+            (SELECT COUNT(*) FROM WISH WHERE WELFARE_ID = #{id}) AS wishCount
         FROM WELFARE
         WHERE WELFARE_ID = #{id}
     </select>

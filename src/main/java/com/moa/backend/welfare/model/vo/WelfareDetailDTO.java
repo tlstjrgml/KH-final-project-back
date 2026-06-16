@@ -28,4 +28,5 @@ public class WelfareDetailDTO {
     private String srngMthdCn;
     private String aplyUrlAddr;
     private String plcyExplnCn;
+    private int wishCount;
 }

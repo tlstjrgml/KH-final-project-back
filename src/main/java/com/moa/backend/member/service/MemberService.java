@@ -28,4 +28,8 @@ public class MemberService {
 	public Member login(String email) {
 		return mapper.findByEmail(email);
 	}
+
+	public Member getMember(Long memberId) {
+	    return mapper.getMember(memberId);
+	}
 }

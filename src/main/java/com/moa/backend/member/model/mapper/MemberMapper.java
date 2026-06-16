@@ -15,4 +15,6 @@ public interface MemberMapper {
 	Member findByMemberId(Long memberId);
 	
 	Member findByEmail(String email);
+
+	Member getMember(Long memberId);
 }

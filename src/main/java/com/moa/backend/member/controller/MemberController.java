@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.moa.backend.common.util.EmailAuthProvider;
-
-import lombok.RequiredArgsConstructor;
+import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.config.jwt.JwtProvider;
+import com.moa.backend.common.util.EmailAuthProvider;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.service.MemberService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -206,6 +208,17 @@ public class MemberController {
 		}else {
 			return ResponseEntity.badRequest().body("아이디 또는 비밀번호가 일치하지 않습니다. 다시 시도해주세요");
 		}
+	}
+	
+	// 현재 로그인한 사용자 정보 조회 - 닉네임
+	@GetMapping("/me")
+	public ResponseEntity<Map<String, Object>> getMe() {
+	    CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    Long memberId = userDetails.getMemberId();
+	    Member member = mService.getMember(memberId);
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("nickname", member.getNickname());
+	    return ResponseEntity.ok(result);
 	}
 }
 
