@@ -1,11 +1,19 @@
 package com.moa.backend.board.service;
 
+import java.util.List;
+
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.moa.backend.board.dto.BoardDetailResponseDTO;
+import com.moa.backend.board.dto.BoardListResponseDTO;
+import com.moa.backend.board.dto.BoardPageRequest;
 import com.moa.backend.board.model.mapper.BoardMapper;
 import com.moa.backend.board.model.vo.Board;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
+import com.moa.backend.common.util.page.PageRequest;
+import com.moa.backend.common.util.page.PageResponse;
+import com.moa.backend.common.util.page.Pagination;
 import com.moa.backend.likes.model.mapper.LikesMapper;
 import com.moa.backend.likes.model.vo.Likes;
 
@@ -103,6 +111,21 @@ public class BoardService {
 		if (result == 0) {
 			throw new IllegalArgumentException("수정 처리에 실패했습니다.");
 		}
+	}
+
+	public PageResponse<BoardListResponseDTO> getBoardList(BoardPageRequest boardPageRequest) {
+
+		// 1. 전체 게시글 개수 조회
+        int totalItems = boardMapper.selectBoardCount(boardPageRequest.getBoardType());
+        
+        // 2. 페이징 계산기 조립
+        Pagination pagination = new Pagination(boardPageRequest, totalItems);
+        
+		// 3. DB에서 현재 페이지 조건(offset, limit)에 맞는 딱 10개(혹은 세팅된 만큼)의 글만 가져오기
+		List<BoardListResponseDTO> list = boardMapper.selectBoardListWithPaging(boardPageRequest);
+
+		// 4. 최종 공용 배달 상자에 데이터와 페이징 정보를 묶어서 완성
+		return new PageResponse<>(list, pagination);
 	}
 
 }
