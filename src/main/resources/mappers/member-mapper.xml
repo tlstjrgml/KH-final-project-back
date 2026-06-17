@@ -37,4 +37,16 @@
    	 SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
 	</select>
 	
+	<!-- 마이페이지 -->
+<select id="memberDetail" parameterType="long" resultType="com.moa.backend.member.model.dto.MemberResponseDto">
+    SELECT M.EMAIL, MD.NAME, M.NICKNAME, MD.BIRTH_DATE, MD.GENDER, MD.PHONE, MD.REGION,
+           MD.JOB_STATUS, MD.INCOME_LEVEL, MD.PROFILE_IMG,
+           (SELECT COUNT(*) FROM BOARD WHERE MEMBER_ID = #{memberId} AND BOARD_STATUS = 'Y') AS BOARD_COUNT,
+           (SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}) AS WISH_COUNT,
+           (SELECT COUNT(*) FROM REPLY WHERE MEMBER_ID = #{memberId} AND REPLY_STATUS = 'Y') AS REPLY_COUNT
+    FROM MEMBER M
+    LEFT JOIN MEMBER_DETAIL MD ON M.MEMBER_ID = MD.MEMBER_ID
+    WHERE M.MEMBER_ID = #{memberId}
+</select>
+	
 </mapper>

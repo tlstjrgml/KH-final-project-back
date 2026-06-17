@@ -1,9 +1,11 @@
 package com.moa.backend.member.model.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-
+import org.apache.ibatis.annotations.Param;
+import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
+
 @Mapper
 public interface MemberMapper {
 	int insertMember(Member m);
@@ -16,5 +18,6 @@ public interface MemberMapper {
 	
 	Member findByEmail(String email);
 
-	Member getMember(Long memberId);
+	MemberResponseDto memberDetail(@Param("memberId") long memberId);
+
 }
