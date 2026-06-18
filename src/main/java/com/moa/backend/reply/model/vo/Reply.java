@@ -1,4 +1,4 @@
-package com.moa.backend.board.model.vo;
+package com.moa.backend.reply.model.vo;
 
 import java.time.LocalDateTime;
 
