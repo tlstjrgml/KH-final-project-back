@@ -104,7 +104,7 @@
     </select>
     
     <select id="selectBoardListWithPaging" 
-            parameterType="com.moa.backend.common.util.page.PageRequest" 
+			parameterType="BoardPageRequest"
             resultType="BoardListResponseDTO">
         SELECT 
             B.BOARD_ID,
@@ -122,11 +122,30 @@
             GROUP BY BOARD_ID
         ) L ON (B.BOARD_ID = L.BOARD_ID)
         WHERE B.BOARD_STATUS = 'Y'
+        
+		<!-- 게시판 타입 필터링 -->
         <if test="boardType != null and boardType != ''">
             AND B.BOARD_TYPE = #{boardType}
         </if>
-        ORDER BY B.BOARD_ID DESC -- 최신 글이 맨 위로 오도록 정렬
-        
+
+		<!-- 검색어 필터링 -->
+		<if test="keyword != null and keyword != ''">
+			AND B.BOARD_TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+
+		<!-- 정렬 조건 분기 -->
+		<choose>
+			<when test="sort == 'views'">
+				ORDER BY B.VIEWS DESC, B.BOARD_ID DESC
+			</when>
+			<when test="sort == 'oldest'">
+				ORDER BY B.CREATE_DATE ASC
+			</when>
+			<otherwise>
+				ORDER BY B.BOARD_ID DESC -- 기본 정렬 (최신순)
+			</otherwise>
+		</choose>
+
         OFFSET #{offset} ROWS
         FETCH NEXT #{limit} ROWS ONLY
     </select>
