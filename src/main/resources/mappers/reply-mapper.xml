@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.moa.backend.reply.model.mapper.ReplyMapper">
+
+	<insert id="insertReply" parameterType="Reply">
+		INSERT INTO REPLY (
+			REPLY_ID,
+			MEMBER_ID,
+			REPLY_CONTENT,
+			CREATE_DATE,
+			MODIFY_DATE,
+			REPLY_STATUS,
+			REF_ID,
+			CODE
+		) VALUES (
+			SEQ_REPLY.NEXTVAL,
+			#{memberId}, 
+			#{replyContent},
+			SYSDATE,
+			NULL, 
+			'Y', 
+			#{refId},
+			#{code}
+		)
+	</insert>
+
+	<update id="updateReply" parameterType="Reply">
+		UPDATE REPLY
+		SET
+			REPLY_CONTENT = #{replyContent},
+			MODIFY_DATE = SYSDATE 
+		WHERE 
+			REPLY_ID = #{replyId}
+			AND MEMBER_ID = #{memberId} 
+			AND REPLY_STATUS = 'Y'
+	</update>
+	
+	<select id="selectReplyById" parameterType="long" resultType="Reply">
+		SELECT *
+		FROM REPLY
+        WHERE 
+        	REPLY_ID = #{replyId}
+        	AND REPLY_STATUS = 'Y'
+	</select>
+	
+	<select id="selectReplyCount" parameterType="map" resultType="int">
+		SELECT COUNT(*)
+		FROM REPLY
+		WHERE 	REF_ID = #{refId}
+				AND CODE = 'B' AND REPLY_STATUS = 'Y'
+	</select>
+
+	<select id="selectReplyList" parameterType="map" resultType="ReplyListResponseDTO">
+	        SELECT 
+	            R.REPLY_ID,
+	            R.MEMBER_ID,
+	            R.REPLY_CONTENT,
+	            R.CREATE_DATE,
+	            R.REPLY_STATUS,
+	            R.REF_ID,
+	            R.CODE,
+	            M.NICKNAME AS WRITER_NICKNAME 
+	        FROM REPLY R
+	        JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
+	        WHERE R.REPLY_STATUS = 'Y'
+		          AND (
+		                /* A. 이번 페이지에 노출될 원댓글이거나 */
+		                (R.CODE = 'B' AND R.REPLY_ID IN 
+		                    (SELECT REPLY_ID 
+		                     FROM REPLY 
+		                     WHERE REF_ID = #{refId} AND CODE = 'B' AND REPLY_STATUS = 'Y'
+		                     ORDER BY REPLY_ID ASC
+		                     OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY)
+		                )
+	                	OR
+		                /* B. 혹은 그 원댓글들에 딸려있는 대댓글 식구들이거나 */
+		                (R.CODE = 'R' AND R.REF_ID IN 
+		                    (SELECT REPLY_ID 
+		                     FROM REPLY 
+		                     WHERE REF_ID = #{refId} AND CODE = 'B' AND REPLY_STATUS = 'Y'
+		                     ORDER BY REPLY_ID ASC
+		                     OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY)
+		                )
+		          )
+	        /* 정렬 알고리즘: 부모-자식 그룹화 -> 부모 먼저 -> 대댓글 작성순 */
+	        ORDER BY 
+	            (CASE WHEN R.CODE = 'B' THEN R.REPLY_ID ELSE R.REF_ID END) ASC,
+	            R.CODE ASC,
+	            R.REPLY_ID ASC
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
