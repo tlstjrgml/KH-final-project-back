@@ -3,6 +3,9 @@ package com.moa.backend.welfare.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.welfare.model.vo.WelfareDetailDTO;
 import com.moa.backend.welfare.model.vo.WelfareListDTO;
 import com.moa.backend.welfare.service.WelfareService;
@@ -59,5 +63,18 @@ public class WelfareController {
         @RequestParam(name = "page", defaultValue = "1") int page
     ) {
         return welfareService.getWelfareList(keyword, lclsfNm, region, ageMin, ageMax, income, job, page);
+    }
+    
+    @GetMapping("/recommend")
+    public ResponseEntity<List<WelfareListDTO>> getRecommend(
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String jobStatus,
+            @RequestParam(required = false, defaultValue = "0") int incomeLevel) {
+        Long memberId = null;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+            memberId = ((CustomUserDetails) auth.getPrincipal()).getMemberId();
+        }
+        return ResponseEntity.ok(welfareService.getRecommend(memberId, region, jobStatus, incomeLevel));
     }
 }

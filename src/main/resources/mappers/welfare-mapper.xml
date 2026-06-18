@@ -203,5 +203,43 @@
             )
         </if>
     </select>
+    
+    <select id="getRecommend" parameterType="map" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
+	    SELECT *
+	    FROM (
+	        SELECT
+	            w.WELFARE_ID AS welfareId,
+	            w.LCLSF_NM AS lclsfNm,
+	            JSON_VALUE(w.FULL_DATA, '$.plcyNm') AS plcyNm,
+	            JSON_VALUE(w.FULL_DATA, '$.aplyYmd') AS aplyYmd,
+	            JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm
+	        FROM WELFARE w
+	        <where>
+	            <if test="memberId != null">
+	                AND w.LCLSF_NM IN (
+	                    SELECT DISTINCT w2.LCLSF_NM
+	                    FROM WELFARE w2
+	                    JOIN WISH wi ON w2.WELFARE_ID = wi.WELFARE_ID
+	                    WHERE wi.MEMBER_ID = #{memberId}
+	                )
+	            </if>
+	            <if test="region != null and region != ''">
+	                AND EXISTS (
+	                    SELECT 1 FROM POLICY_REGION PR
+	                    WHERE PR.WELFARE_ID = w.WELFARE_ID
+	                    AND PR.ZIP_CD LIKE #{region} || '%'
+	                )
+	            </if>
+	            <if test="jobStatus != null and jobStatus != ''">
+	                AND JSON_VALUE(w.FULL_DATA, '$.emplmSttsCd') = #{jobStatus}
+	            </if>
+	            <if test="incomeLevel != null and incomeLevel > 0">
+	                AND JSON_VALUE(w.FULL_DATA, '$.ernIncmSeCd') = #{incomeLevel}
+	            </if>
+	        </where>
+	        ORDER BY DBMS_RANDOM.VALUE
+	    )
+	    WHERE ROWNUM &lt;= 4
+	</select>
 
 </mapper>

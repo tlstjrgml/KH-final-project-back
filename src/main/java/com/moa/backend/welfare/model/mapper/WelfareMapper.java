@@ -29,4 +29,6 @@ public interface WelfareMapper {
 
 	List<WelfareListDTO> getRelatedWelfare(@Param("lclsfNm") String lclsfNm, @Param("excludeId") Long excludeId);
 
+	List<WelfareListDTO> getRecommend(Map<String, Object> params);
+
 }
