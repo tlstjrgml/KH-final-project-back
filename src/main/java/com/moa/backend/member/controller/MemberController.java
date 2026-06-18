@@ -4,19 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.config.jwt.JwtProvider;
 import com.moa.backend.common.util.EmailAuthProvider;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.service.MemberService;
+import com.moa.backend.member.model.dto.MemberResponseDto;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -210,15 +212,12 @@ public class MemberController {
 		}
 	}
 	
-	// 현재 로그인한 사용자 정보 조회 - 닉네임
+
 	@GetMapping("/me")
-	public ResponseEntity<Map<String, Object>> getMe() {
-	    CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    Long memberId = userDetails.getMemberId();
-	    Member member = mService.getMember(memberId);
-	    Map<String, Object> result = new HashMap<>();
-	    result.put("nickname", member.getNickname());
-	    return ResponseEntity.ok(result);
+	public ResponseEntity<MemberResponseDto> membersMe(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	    long memberId = userDetails.getMemberId();
+	    MemberResponseDto dto = mService.membersMe(memberId);
+	    return ResponseEntity.ok(dto);
 	}
 }
 

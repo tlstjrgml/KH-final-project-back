@@ -2,6 +2,7 @@ package com.moa.backend.member.service;
 
 import org.springframework.stereotype.Service;
 
+import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.mapper.MemberMapper;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
@@ -28,8 +29,11 @@ public class MemberService {
 	public Member login(String email) {
 		return mapper.findByEmail(email);
 	}
-
-	public Member getMember(Long memberId) {
-	    return mapper.getMember(memberId);
+//membersMe APi에서 nickname을 주기 때문에 중복 가능성이 있습니다 확인후 처리해주세요
+//	public Member getMember(Long memberId) {
+//	    return mapper.getMember(memberId);
+//	}
+	public MemberResponseDto membersMe(long memberId) {
+		return mapper.memberDetail(memberId);
 	}
 }
