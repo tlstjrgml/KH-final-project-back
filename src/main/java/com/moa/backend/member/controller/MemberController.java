@@ -4,21 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.config.jwt.JwtProvider;
 import com.moa.backend.common.util.EmailAuthProvider;
+import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.service.MemberService;
-import com.moa.backend.member.model.dto.MemberResponseDto;
-
 
 import lombok.RequiredArgsConstructor;
 

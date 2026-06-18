@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.moa.backend.welfare.model.mapper.WelfareMapper;
@@ -57,5 +58,14 @@ public class WelfareService {
         result.put("total", total);
         result.put("totalPages", (int) Math.ceil((double) total / pageSize));
         return result;
+    }
+
+    public List<WelfareListDTO> getRecommend(Long memberId, String region, String jobStatus, int incomeLevel) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("memberId", memberId);
+        params.put("region", region);
+        params.put("jobStatus", jobStatus);
+        params.put("incomeLevel", incomeLevel);
+        return mapper.getRecommend(params);
     }
 }
