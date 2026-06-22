@@ -86,13 +86,14 @@
 	</update>
 
 	<update id="updateBoard" parameterType="Board">
-		UPDATE BOARD
-		SET BOARD_TITLE = #{boardTitle},
-			BOARD_CONTENT = #{boardContent},
-			MODIFY_DATE = SYSDATE
-		WHERE BOARD_ID = #{boardId}
-			AND BOARD_STATUS = 'Y'
-	</update>
+    UPDATE BOARD
+    SET BOARD_TITLE = #{boardTitle},
+        BOARD_CONTENT = #{boardContent},
+        WELFARE_ID = #{welfareId},
+        MODIFY_DATE = SYSDATE
+    WHERE BOARD_ID = #{boardId}
+        AND BOARD_STATUS = 'Y'
+</update>
 	
 	<select id="selectBoardCount" resultType="int">
         SELECT COUNT(*)
