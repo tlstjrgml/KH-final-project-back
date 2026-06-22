@@ -13,4 +13,10 @@ import lombok.ToString;
 public class BoardPageRequest extends PageRequest {
 	// 프론트엔드에서 파라미터로 넘겨줄 게시판 타입 ("FRE", "REV", "NOT")
 	private String boardType;
+	
+    // 검색어
+    private String keyword; 
+    
+    // 정렬 조건 ("latest", "oldest", "views")
+    private String sort = "latest"; 
 }

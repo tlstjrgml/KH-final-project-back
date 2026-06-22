@@ -16,11 +16,7 @@ public interface BoardMapper {
 	void insertBoard(Board board);
 
 	int getListCount(int i);
-//	List<Board> selectBoard();
-//
-//	int getListCount(int i);
-
-
+	
 	void updateViews(Long boardId);
 
 	BoardDetailResponseDTO selectBoardDetail(Long boardId);
@@ -29,7 +25,7 @@ public interface BoardMapper {
 
 	int updateBoard(Board updateData);
 
-	int selectBoardCount(String boardType);
+	int selectBoardCount(BoardPageRequest boardPageRequest);
 
 	List<BoardListResponseDTO> selectBoardListWithPaging(BoardPageRequest boardPageRequest);
 	

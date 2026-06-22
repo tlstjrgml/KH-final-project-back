@@ -116,7 +116,7 @@ public class BoardService {
 	public PageResponse<BoardListResponseDTO> getBoardList(BoardPageRequest boardPageRequest) {
 
 		// 1. 전체 게시글 개수 조회
-        int totalItems = boardMapper.selectBoardCount(boardPageRequest.getBoardType());
+        int totalItems = boardMapper.selectBoardCount(boardPageRequest);
         
         // 2. 페이징 계산기 조립
         Pagination pagination = new Pagination(boardPageRequest, totalItems);
