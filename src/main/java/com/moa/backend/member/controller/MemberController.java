@@ -222,6 +222,36 @@ public class MemberController {
 	    return ResponseEntity.ok(dto);
 	}
 	
+// 1. 총 가입자 수 API
+	@GetMapping("/admin/dashboard/total-members")
+	public ResponseEntity<Integer> getTotalMemberCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		// getIsAdmin() 방식 적용
+		if (userDetails == null || !"Y".equals(userDetails.getIsAdmin())) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mService.getTotalMemberCount());
+	}
+
+	// 2. 가입자 7일 추이 API
+	@GetMapping("/admin/dashboard/signup-trend")
+	public ResponseEntity<List<Map<String, Object>>> getSignupTrend(
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails == null || !"Y".equals(userDetails.getIsAdmin())) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mService.getSignupTrend());
+	}
+
+	// 3. 인기 복지 TOP 10 API
+	@GetMapping("/admin/dashboard/top-welfare")
+	public ResponseEntity<List<Map<String, Object>>> getTopWelfare(
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails == null || !"Y".equals(userDetails.getIsAdmin())) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mService.getTopWelfare());
+	}
+	
 	@GetMapping("/me/boards")
 	public ResponseEntity<List<BoardResponseDto>> membersMeBoards(@AuthenticationPrincipal CustomUserDetails userDetails){
 		long memberId = userDetails.getMemberId();
@@ -232,8 +262,9 @@ public class MemberController {
 	@GetMapping("/me/replies")
 	public ResponseEntity<List<ReplyResponseDto>> membersMeReplies(@AuthenticationPrincipal CustomUserDetails userDetails){
 		long memberId = userDetails.getMemberId();
-		List<ReplyResponseDto> dtoList = mService.selectMyReplies(memberId);
+		List<BoardResponseDto> dtoList = mService.selectMyReplies(memberId); 
 		return ResponseEntity.ok(dtoList);
+	}
 	}
 }
 
