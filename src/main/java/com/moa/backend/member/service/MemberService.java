@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
+import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.mapper.MemberMapper;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
@@ -42,7 +44,7 @@ public class MemberService {
 		return mapper.memberDetail(memberId);
 	}
 
-	// 1. 총 가입자 수 반환
+  // 1. 총 가입자 수 반환
 	public int getTotalMemberCount() {
 		return mapper.getTotalMemberCount();
 	}
@@ -55,6 +57,14 @@ public class MemberService {
 	// 3. 인기 복지 TOP 10 반환
 	public List<Map<String, Object>> getTopWelfare() {
 		return mapper.getTopWelfare();
+	}
+	
+	public List<BoardResponseDto> selectMyBoards(long memberId) {
+		return mapper.selectMyBoards(memberId);
+	}
+
+	public List<ReplyResponseDto> selectMyReplies(long memberId) {
+		return mapper.selectMyReplies(memberId);
 	}
 }
 
