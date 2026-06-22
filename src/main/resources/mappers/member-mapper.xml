@@ -38,15 +38,43 @@
 	</select>
 	
 	<!-- 마이페이지 -->
-<select id="memberDetail" parameterType="long" resultType="com.moa.backend.member.model.dto.MemberResponseDto">
-    SELECT M.EMAIL, MD.NAME, M.NICKNAME, MD.BIRTH_DATE, MD.GENDER, MD.PHONE, MD.REGION,
-           MD.JOB_STATUS, MD.INCOME_LEVEL, MD.PROFILE_IMG,
-           (SELECT COUNT(*) FROM BOARD WHERE MEMBER_ID = #{memberId} AND BOARD_STATUS = 'Y') AS BOARD_COUNT,
-           (SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}) AS WISH_COUNT,
-           (SELECT COUNT(*) FROM REPLY WHERE MEMBER_ID = #{memberId} AND REPLY_STATUS = 'Y') AS REPLY_COUNT
-    FROM MEMBER M
-    LEFT JOIN MEMBER_DETAIL MD ON M.MEMBER_ID = MD.MEMBER_ID
-    WHERE M.MEMBER_ID = #{memberId}
-</select>
+	<select id="memberDetail" parameterType="long" resultType="com.moa.backend.member.model.dto.MemberResponseDto">
+	    SELECT M.EMAIL, MD.NAME, M.NICKNAME, MD.BIRTH_DATE, MD.GENDER, MD.PHONE, MD.REGION,
+	           MD.JOB_STATUS, MD.INCOME_LEVEL, MD.PROFILE_IMG,
+	           (SELECT COUNT(*) FROM BOARD WHERE MEMBER_ID = #{memberId} AND BOARD_STATUS = 'Y') AS BOARD_COUNT,
+	           (SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}) AS WISH_COUNT,
+	           (SELECT COUNT(*) FROM REPLY WHERE MEMBER_ID = #{memberId} AND REPLY_STATUS = 'Y') AS REPLY_COUNT
+	    FROM MEMBER M
+	    LEFT JOIN MEMBER_DETAIL MD ON M.MEMBER_ID = MD.MEMBER_ID
+	    WHERE M.MEMBER_ID = #{memberId}
+	</select>
 	
+	<!--마이페이지 내가 작성한 게시글 조회-->
+	<select id="selectMyBoards" parameterType = "long" resultType = "com.moa.backend.board.dto.BoardResponseDto">
+		SELECT B.BOARD_ID, B.BOARD_TYPE, B.BOARD_TITLE, B.VIEWS, B.CREATE_DATE,
+       (SELECT COUNT(*) FROM LIKES WHERE BOARD_ID = B.BOARD_ID) AS LIKES
+		FROM BOARD B
+		WHERE B.MEMBER_ID = #{memberId}
+		  AND B.BOARD_STATUS = 'Y'
+	</select>
+	
+	<!--마이페이지 내가 작성한 댓글 조회-->
+	<select id = "selectMyReplies" parameterType = "long" resultType = "com.moa.backend.member.model.dto.ReplyResponseDto">
+		SELECT 
+        R.REPLY_ID AS replyId, 
+        R.REPLY_CONTENT AS replyContent, 
+        R.CREATE_DATE AS createDate, 
+        R.CODE AS code, 
+        B.BOARD_TYPE AS boardType,
+        B.BOARD_ID AS boardId
+    FROM REPLY R
+    JOIN BOARD B ON B.BOARD_ID = (
+        CASE 
+            WHEN R.CODE = 'B' THEN R.REF_ID
+            WHEN R.CODE = 'R' THEN (SELECT P.REF_ID FROM REPLY P WHERE P.REPLY_ID = R.REF_ID)
+        END
+    )
+    WHERE R.MEMBER_ID = #{memberId}
+    ORDER BY R.CREATE_DATE DESC
+	</select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.moa.backend.member.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.config.jwt.JwtProvider;
 import com.moa.backend.common.util.EmailAuthProvider;
 import com.moa.backend.member.model.dto.MemberResponseDto;
+import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.service.MemberService;
 
@@ -204,7 +207,7 @@ public class MemberController {
 		}
 		if(bcrypt.matches(request.get("password"), member.getPassword())) {
 			
-			String token = jwtProvider.generateToken(member.getMemberId(), member.getIsAdmin());
+			String token = jwtProvider.generateToken(member.getMemberId(), member.getIsAdmin(), member.getNickname());
 			return ResponseEntity.ok(token);
 		}else {
 			return ResponseEntity.badRequest().body("아이디 또는 비밀번호가 일치하지 않습니다. 다시 시도해주세요");
@@ -217,6 +220,20 @@ public class MemberController {
 	    long memberId = userDetails.getMemberId();
 	    MemberResponseDto dto = mService.membersMe(memberId);
 	    return ResponseEntity.ok(dto);
+	}
+	
+	@GetMapping("/me/boards")
+	public ResponseEntity<List<BoardResponseDto>> membersMeBoards(@AuthenticationPrincipal CustomUserDetails userDetails){
+		long memberId = userDetails.getMemberId();
+		List<BoardResponseDto> dtoList = mService.selectMyBoards(memberId);
+		return ResponseEntity.ok(dtoList);
+	}
+	
+	@GetMapping("/me/replies")
+	public ResponseEntity<List<ReplyResponseDto>> membersMeReplies(@AuthenticationPrincipal CustomUserDetails userDetails){
+		long memberId = userDetails.getMemberId();
+		List<ReplyResponseDto> dtoList = mService.selectMyReplies(memberId);
+		return ResponseEntity.ok(dtoList);
 	}
 }
 
