@@ -1,5 +1,7 @@
 package com.moa.backend.board.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moa.backend.board.dto.BoardDetailResponseDTO;
@@ -18,7 +21,6 @@ import com.moa.backend.board.dto.BoardPageRequest;
 import com.moa.backend.board.model.vo.Board;
 import com.moa.backend.board.service.BoardService;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
-import com.moa.backend.common.util.page.PageRequest;
 import com.moa.backend.common.util.page.PageResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -110,4 +112,29 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("목록을 불러오는 중 오류가 발생했습니다.");
 		}
 	}
+	
+	//메인페이지 인기게시글 불러오기
+	@GetMapping("/top5")
+	public ResponseEntity<?> getTop5(@RequestParam("boardType") String boardType) {
+	    try {
+	        List<BoardListResponseDTO> list = bService.getTop5(boardType);
+	        return ResponseEntity.ok(list);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회 중 오류가 발생했습니다.");
+	    }
+	}
+	
+	//메인페이지 공지사항 불러오기
+	@GetMapping("/notice/recent")
+	public ResponseEntity<?> getRecentNotice() {
+	    try {
+	        List<BoardListResponseDTO> list = bService.getRecentNotice();
+	        return ResponseEntity.ok(list);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회 중 오류가 발생했습니다.");
+	    }
+	}
+	
 }

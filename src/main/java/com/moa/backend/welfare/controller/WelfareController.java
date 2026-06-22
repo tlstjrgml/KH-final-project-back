@@ -1,7 +1,6 @@
 package com.moa.backend.welfare.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -52,17 +51,18 @@ public class WelfareController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> getWelfareList(
-        @RequestParam(name = "keyword", defaultValue = "") String keyword,
-        @RequestParam(name = "lclsfNm", defaultValue = "") List<String> lclsfNm,
-        @RequestParam(name = "region", defaultValue = "") List<String> region,
-        @RequestParam(name = "ageMin", defaultValue = "0") int ageMin,
-        @RequestParam(name = "ageMax", defaultValue = "0") int ageMax,
-        @RequestParam(name = "income", defaultValue = "") List<String> income,
-        @RequestParam(name = "job", defaultValue = "") List<String> job,
-        @RequestParam(name = "page", defaultValue = "1") int page
-    ) {
-        return welfareService.getWelfareList(keyword, lclsfNm, region, ageMin, ageMax, income, job, page);
+	    public ResponseEntity<?> getWelfareList(
+	        @RequestParam(name = "keyword", defaultValue = "") String keyword,
+	        @RequestParam(name = "lclsfNm", defaultValue = "") List<String> lclsfNm,
+	        @RequestParam(name = "region", defaultValue = "") List<String> region,
+	        @RequestParam(name = "ageMin", defaultValue = "0") int ageMin,
+	        @RequestParam(name = "ageMax", defaultValue = "0") int ageMax,
+	        @RequestParam(name = "income", defaultValue = "") List<String> income,
+	        @RequestParam(name = "job", defaultValue = "") List<String> job,
+	        @RequestParam(name = "page", defaultValue = "1") int page,
+	        @RequestParam(name = "sort", defaultValue = "") String sort
+	    ) {
+        return ResponseEntity.ok(welfareService.getWelfareList(keyword, lclsfNm, region, ageMin, ageMax, income, job, sort, page));
     }
     
     @GetMapping("/recommend")

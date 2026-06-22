@@ -88,69 +88,70 @@
     </select>
 
     <select id="getWelfareList" parameterType="com.moa.backend.welfare.model.vo.WelfareSearchDTO" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
-        SELECT * FROM (
-            SELECT ROWNUM AS rn, t.* FROM (
-                SELECT
-                    WELFARE_ID AS welfareId,
-                    LCLSF_NM AS lclsfNm,
-                    JSON_VALUE(FULL_DATA, '$.plcyNm') AS plcyNm,
-                    JSON_VALUE(FULL_DATA, '$.aplyYmd') AS aplyYmd,
-                    JSON_VALUE(FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm
-                FROM WELFARE
-                WHERE 1=1
-                <if test="keyword != null and keyword != ''">
-                    AND JSON_VALUE(FULL_DATA, '$.plcyNm') LIKE '%' || #{keyword} || '%'
-                </if>
-                <if test="lclsfNm != null and lclsfNm.size() > 0">
-                    AND (
-                        <foreach collection="lclsfNm" item="cat" separator=" OR ">
-                            (LCLSF_NM LIKE '%' || #{cat} || '%'
-                            <if test="cat == '참여･기반'">
-                                OR LCLSF_NM LIKE '%참여권리%'
-                            </if>
-                            <if test="cat == '금융･복지･문화'">
-                                OR LCLSF_NM LIKE '%복지문화%'
-                            </if>
-                            <if test="cat == '교육'">
-                                OR LCLSF_NM LIKE '%교육･직업훈련%'
-                            </if>
-                            )
-                        </foreach>
-                    )
-                </if>
-                <if test="region != null and region.size() > 0">
-                    AND (
-                        <foreach collection="region" item="r" separator=" OR ">
-                            JSON_VALUE(FULL_DATA, '$.zipCd') LIKE #{r} || '%'
-                        </foreach>
-                    )
-                </if>
-                <if test="ageMin > 0 and ageMax > 0">
-				    AND (
-				        (SPRT_TRGT_MIN_AGE = 0 AND SPRT_TRGT_MAX_AGE = 0)
-				        OR (SPRT_TRGT_MIN_AGE &lt;= #{ageMax} AND SPRT_TRGT_MAX_AGE &gt;= #{ageMin})
-				    )
-				</if>
-                <if test="income != null and income.size() > 0">
-                    AND (
-                        <foreach collection="income" item="i" separator=" OR ">
-                            JSON_VALUE(FULL_DATA, '$.earnCndSeCd') = #{i}
-                        </foreach>
-                    )
-                </if>
-                <if test="job != null and job.size() > 0">
-                    AND (
-                        <foreach collection="job" item="j" separator=" OR ">
-                            JOB_CD LIKE '%' || #{j} || '%'
-                        </foreach>
-                    )
-                </if>
-                ORDER BY WELFARE_ID DESC
-            ) t
-            WHERE ROWNUM &lt;= #{page} + 14
-        )
-        WHERE rn &gt; #{page}
-    </select>
+		    SELECT
+		        w.WELFARE_ID AS welfareId,
+		        w.LCLSF_NM AS lclsfNm,
+		        JSON_VALUE(w.FULL_DATA, '$.plcyNm') AS plcyNm,
+		        JSON_VALUE(w.FULL_DATA, '$.aplyYmd') AS aplyYmd,
+		        JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm,
+		        COUNT(wi.WELFARE_ID) AS wishCount
+		    FROM WELFARE w
+		    LEFT JOIN WISH wi ON w.WELFARE_ID = wi.WELFARE_ID
+		    WHERE 1=1
+		    <if test="keyword != null and keyword != ''">
+		        AND JSON_VALUE(w.FULL_DATA, '$.plcyNm') LIKE '%' || #{keyword} || '%'
+		    </if>
+		    <if test="lclsfNm != null and lclsfNm.size() > 0">
+		        AND (
+		            <foreach collection="lclsfNm" item="cat" separator=" OR ">
+		                (w.LCLSF_NM LIKE '%' || #{cat} || '%'
+		                <if test="cat == '참여･기반'">OR w.LCLSF_NM LIKE '%참여권리%'</if>
+		                <if test="cat == '금융･복지･문화'">OR w.LCLSF_NM LIKE '%복지문화%'</if>
+		                <if test="cat == '교육'">OR w.LCLSF_NM LIKE '%교육･직업훈련%'</if>
+		                )
+		            </foreach>
+		        )
+		    </if>
+		    <if test="region != null and region.size() > 0">
+		        AND (
+		            <foreach collection="region" item="r" separator=" OR ">
+		                JSON_VALUE(w.FULL_DATA, '$.zipCd') LIKE #{r} || '%'
+		            </foreach>
+		        )
+		    </if>
+		    <if test="ageMin > 0 and ageMax > 0">
+		        AND w.SPRT_TRGT_MIN_AGE &lt;= #{ageMax}
+		        AND w.SPRT_TRGT_MAX_AGE &gt;= #{ageMin}
+		    </if>
+		    <if test="income != null and income.size() > 0">
+		        AND (
+		            <foreach collection="income" item="i" separator=" OR ">
+		                JSON_VALUE(w.FULL_DATA, '$.earnCndSeCd') = #{i}
+		            </foreach>
+		        )
+		    </if>
+		    <if test="job != null and job.size() > 0">
+		        AND (
+		            <foreach collection="job" item="j" separator=" OR ">
+		                w.JOB_CD LIKE '%' || #{j} || '%'
+		            </foreach>
+		        )
+		    </if>
+		    GROUP BY w.WELFARE_ID, w.LCLSF_NM,
+		        JSON_VALUE(w.FULL_DATA, '$.plcyNm'),
+		        JSON_VALUE(w.FULL_DATA, '$.aplyYmd'),
+		        JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm')
+		    <choose>
+		        <when test="sort == '찜 많은순'">
+		            ORDER BY wishCount DESC, w.WELFARE_ID DESC
+		        </when>
+		        <otherwise>
+		            ORDER BY w.WELFARE_ID DESC
+		        </otherwise>
+		    </choose>
+		    OFFSET #{offset} ROWS
+		    FETCH NEXT #{limit} ROWS ONLY
+		</select>
 
     <select id="getWelfareCount" parameterType="com.moa.backend.welfare.model.vo.WelfareSearchDTO" resultType="int">
         SELECT COUNT(*) FROM WELFARE
