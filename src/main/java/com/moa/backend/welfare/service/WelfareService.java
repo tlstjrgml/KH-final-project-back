@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
+import com.moa.backend.common.util.page.PageResponse;
+import com.moa.backend.common.util.page.Pagination;
 import com.moa.backend.welfare.model.mapper.WelfareMapper;
 import com.moa.backend.welfare.model.vo.WelfareDetailDTO;
 import com.moa.backend.welfare.model.vo.WelfareListDTO;
@@ -36,9 +37,8 @@ public class WelfareService {
         return mapper.getRelatedWelfare(lclsfNm, excludeId);
     }
 
-    public Map<String, Object> getWelfareList(String keyword, List<String> lclsfNm, List<String> region, int ageMin, int ageMax, List<String> income, List<String> job, int page) {
-        int pageSize = 14;
-        int offset = (page - 1) * pageSize;
+    public PageResponse<WelfareListDTO> getWelfareList(String keyword, List<String> lclsfNm, List<String> region, int ageMin, int ageMax, List<String> income, List<String> job, String sort, int page) {
+        int limit = 14;
 
         WelfareSearchDTO params = new WelfareSearchDTO();
         params.setKeyword(keyword);
@@ -48,16 +48,16 @@ public class WelfareService {
         params.setAgeMax(ageMax);
         params.setIncome(income);
         params.setJob(job);
-        params.setPage(offset);
+        params.setSort(sort);
+        params.setPage(page);
+        params.setLimit(limit);
+
+        int totalItems = mapper.getWelfareCount(params);
+        Pagination pagination = new Pagination(params, totalItems);
 
         List<WelfareListDTO> list = mapper.getWelfareList(params);
-        int total = mapper.getWelfareCount(params);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("list", list);
-        result.put("total", total);
-        result.put("totalPages", (int) Math.ceil((double) total / pageSize));
-        return result;
+        return new PageResponse<>(list, pagination);
     }
 
     public List<WelfareListDTO> getRecommend(Long memberId, String region, String jobStatus, int incomeLevel) {

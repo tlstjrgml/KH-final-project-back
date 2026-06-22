@@ -28,6 +28,12 @@ public interface BoardMapper {
 	int selectBoardCount(BoardPageRequest boardPageRequest);
 
 	List<BoardListResponseDTO> selectBoardListWithPaging(BoardPageRequest boardPageRequest);
+
+	List<BoardListResponseDTO> getTop5(String boardType);
+
+	List<BoardListResponseDTO> getRecentNotice();
+
+	
 	
 
 }

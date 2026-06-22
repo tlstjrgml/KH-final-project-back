@@ -128,4 +128,12 @@ public class BoardService {
 		return new PageResponse<>(list, pagination);
 	}
 
+	public List<BoardListResponseDTO> getTop5(String boardType) {
+		return boardMapper.getTop5(boardType);
+	}
+
+	public List<BoardListResponseDTO> getRecentNotice() {
+		return boardMapper.getRecentNotice();
+	}
+
 }
