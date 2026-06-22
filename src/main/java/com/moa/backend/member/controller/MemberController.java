@@ -1,6 +1,7 @@
 package com.moa.backend.member.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -217,6 +218,38 @@ public class MemberController {
 	    long memberId = userDetails.getMemberId();
 	    MemberResponseDto dto = mService.membersMe(memberId);
 	    return ResponseEntity.ok(dto);
+	}
+	
+	// 1. 총 가입자 수 API
+	@GetMapping("/admin/dashboard/total-members")
+	public ResponseEntity<Integer> getTotalMemberCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails == null
+				|| userDetails.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mService.getTotalMemberCount());
+	}
+
+	// 2. 가입자 7일 추이 API
+	@GetMapping("/admin/dashboard/signup-trend")
+	public ResponseEntity<List<Map<String, Object>>> getSignupTrend(
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails == null
+				|| userDetails.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mService.getSignupTrend());
+	}
+
+	// 3. 인기 복지 TOP 10 API
+	@GetMapping("/admin/dashboard/top-welfare")
+	public ResponseEntity<List<Map<String, Object>>> getTopWelfare(
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		if (userDetails == null
+				|| userDetails.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mService.getTopWelfare());
 	}
 }
 

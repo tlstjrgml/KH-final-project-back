@@ -1,5 +1,8 @@
 package com.moa.backend.member.model.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.moa.backend.member.model.dto.MemberResponseDto;
@@ -19,5 +22,12 @@ public interface MemberMapper {
 	Member findByEmail(String email);
 
 	MemberResponseDto memberDetail(@Param("memberId") long memberId);
+	
+	// 대시보드 통계용
+	int getTotalMemberCount();
+		
+	List<Map<String, Object>> getSignupTrend();
+	
+	List<Map<String, Object>> getTopWelfare();
 
 }

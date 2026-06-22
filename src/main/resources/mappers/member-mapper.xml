@@ -48,5 +48,49 @@
     LEFT JOIN MEMBER_DETAIL MD ON M.MEMBER_ID = MD.MEMBER_ID
     WHERE M.MEMBER_ID = #{memberId}
 </select>
+
+	<select id="getTotalMemberCount" resultType="int">
+		SELECT COUNT(*) FROM MEMBER
+	</select>
+
+	<select id="getSignupTrend" resultType="java.util.Map">
+		SELECT 
+			d."date",
+			COUNT(m.MEMBER_ID) AS "users"
+		FROM (
+			SELECT TO_CHAR(SYSDATE - 7 + LEVEL, 'MM-DD') AS "date"
+			FROM DUAL
+			CONNECT BY LEVEL &lt;= 7
+		) d
+		LEFT JOIN MEMBER m ON TO_CHAR(m.SIGNUP_DATE, 'MM-DD') = d."date"
+		GROUP BY d."date"
+		ORDER BY d."date" ASC
+	</select>
+
+	<select id="getTopWelfare" resultType="java.util.Map">
+	    SELECT * FROM (
+	        SELECT 
+	            w.LCLSF_NM AS "title",
+	            /* 카테고리별로 조회수와 찜 횟수를 더해서 합계를 냅니다. */
+	            SUM(NVL(b.total_views, 0)) AS "views",
+	            SUM(NVL(wh.total_wishes, 0)) AS "wishes",
+	            (SUM(NVL(b.total_views, 0)) + SUM(NVL(wh.total_wishes, 0))) AS "score"
+	        FROM WELFARE w
+	        LEFT JOIN (
+	            SELECT WELFARE_ID, SUM(VIEWS) AS total_views
+	            FROM BOARD
+	            WHERE BOARD_TYPE = 'REV'
+	            GROUP BY WELFARE_ID
+	        ) b ON w.WELFARE_ID = b.WELFARE_ID
+	        LEFT JOIN (
+	            SELECT WELFARE_ID, COUNT(*) AS total_wishes
+	            FROM WISH
+	            GROUP BY WELFARE_ID
+	        ) wh ON w.WELFARE_ID = wh.WELFARE_ID
+	        /* 카테고리(LCLSF_NM) 단위로 묶어줍니다. */
+	        GROUP BY w.LCLSF_NM
+	        ORDER BY "score" DESC
+	    ) WHERE ROWNUM &lt;= 10
+	</select>
 	
 </mapper>
