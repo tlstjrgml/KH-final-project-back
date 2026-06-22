@@ -79,6 +79,7 @@
 	        GROUP BY w.LCLSF_NM
 	        ORDER BY "score" DESC
 	    ) WHERE ROWNUM &lt;= 10
+	 </select>
 
   <!-- 마이페이지 -->
 	<select id="memberDetail" parameterType="long" resultType="com.moa.backend.member.model.dto.MemberResponseDto">

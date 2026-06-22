@@ -262,11 +262,11 @@ public class MemberController {
 	@GetMapping("/me/replies")
 	public ResponseEntity<List<ReplyResponseDto>> membersMeReplies(@AuthenticationPrincipal CustomUserDetails userDetails){
 		long memberId = userDetails.getMemberId();
-		List<BoardResponseDto> dtoList = mService.selectMyReplies(memberId); 
+		List<ReplyResponseDto> dtoList = mService.selectMyReplies(memberId); 
 		return ResponseEntity.ok(dtoList);
 	}
-	}
 }
+
 
 
 
