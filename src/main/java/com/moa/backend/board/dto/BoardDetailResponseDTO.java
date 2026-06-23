@@ -1,6 +1,9 @@
 package com.moa.backend.board.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.moa.backend.board.model.vo.Attachment;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,4 +34,6 @@ public class BoardDetailResponseDTO {
     
     private Boolean isLiked; 		// 내가 좋아요 눌렀는지 여부
     private Boolean isOwner;		// 작성자 여부
+    
+    private List<Attachment> attachments;	// 첨부파일 목록
 }

@@ -26,6 +26,39 @@
 		)
 	</insert>
 
+	<insert id="insertAttachment" parameterType="Attachment">
+		INSERT INTO ATTACHMENT (
+			ATTM_ID,
+			ORIGINAL_NAME,
+			RENAME_NAME,
+			ATTM_PATH,
+			ATTM_STATUS,
+			BOARD_ID
+		) VALUES (
+			SEQ_ATTACHMENT.NEXTVAL,
+			#{originalName},
+			#{renameName},
+			#{attmPath}, 
+			'Y',
+			#{boardId} 
+		)
+	</insert>
+
+	<select id="selectAttachmentList" parameterType="long"
+		resultType="Attachment">
+		SELECT
+			ATTM_ID,
+			ORIGINAL_NAME,
+			RENAME_NAME,
+			ATTM_PATH,
+			ATTM_STATUS,
+			BOARD_ID
+		FROM ATTACHMENT
+		WHERE BOARD_ID = #{boardId}
+				AND ATTM_STATUS = 'Y'
+		ORDER BY ATTM_ID ASC
+	</select>
+	
 	<select id="selectBoard" resultType="Board">
 		select * from board 
 		join member using (member_id)
@@ -123,7 +156,7 @@
             GROUP BY BOARD_ID
         ) L ON (B.BOARD_ID = L.BOARD_ID)
         WHERE B.BOARD_STATUS = 'Y'
-        
+
 		<!-- 게시판 타입 필터링 -->
         <if test="boardType != null and boardType != ''">
             AND B.BOARD_TYPE = #{boardType}
@@ -151,6 +184,28 @@
         FETCH NEXT #{limit} ROWS ONLY
     </select>
     
+    <select id="selectAttachmentById" parameterType="long" resultType="Attachment">
+        SELECT ATTM_ID, RENAME_NAME, BOARD_ID 
+        FROM ATTACHMENT 
+        WHERE ATTM_ID = #{attmId}
+    </select>
+
+    <update id="deleteAttachment" parameterType="long">
+        UPDATE ATTACHMENT 
+        SET ATTM_STATUS = 'N' 
+        WHERE ATTM_ID = #{attmId}
+    </update>
+
+	<update id="updateBoardContent">
+		UPDATE BOARD
+		SET
+			BOARD_TITLE = #{arg1.boardTitle},
+		 	BOARD_CONTENT = #{arg1.boardContent},
+			WELFARE_ID = #{arg1.welfareId},
+			MODIFY_DATE = SYSDATE
+		WHERE 
+			BOARD_ID = #{arg0} 
+	</update>
     <select id="getTop5" resultType="BoardListResponseDTO">
 	    SELECT 
 	        B.BOARD_ID,

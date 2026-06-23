@@ -39,14 +39,14 @@ public class MemberController {
 		try {
 			// 1. 가짜 데이터(더미) 담은 VO 객체 생성
 			Member testMember = new Member();
-			testMember.setEmail("test777@naver.com"); // 유니크 값 테스트시 변경할 것
+			testMember.setEmail("asdasd6831@gmail.com"); // 유니크 값 테스트시 변경할 것
 
 			// 스프링 시큐리티 비번 암호화 적용해서
-			String encPwd = bcrypt.encode("1234");
+			String encPwd = bcrypt.encode("song");
 			testMember.setPassword(encPwd);
 
 			testMember.setLoginType("LOCAL");
-			testMember.setNickname("테스트노예");
+			testMember.setNickname("송재현");
 
 			// 2. 서비스 호출하기
 			int result = mService.insertMember(testMember);
@@ -266,34 +266,3 @@ public class MemberController {
 		return ResponseEntity.ok(dtoList);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
