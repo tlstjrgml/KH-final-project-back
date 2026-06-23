@@ -19,9 +19,10 @@ public class JwtProvider {
 	private long expiration;
 
 	// 토큰생성:로그인 성공 시 memberId를 클레임에 담아 jwt 발급
-	public String generateToken(Long memberId, String isAdmin) {
+	public String generateToken(Long memberId, String isAdmin, String nickname) {
 		return Jwts.builder().claim("memberId", memberId) // 커스텀 클레임: 회원 아이디
 				.claim("isAdmin", isAdmin)
+				.claim("nickname", nickname)
 				.issuedAt(new Date()) // iat: 발급시간
 				.expiration(new Date(System.currentTimeMillis() + expiration)) // exp:만료시간
 				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes())) // hs256 서명

@@ -40,6 +40,11 @@ public interface BoardMapper {
 	Attachment selectAttachmentById(Long attmId);
 
 	int deleteAttachment(Long attmId);
+	List<BoardListResponseDTO> getTop5(String boardType);
+
+	List<BoardListResponseDTO> getRecentNotice();
+
+	
 	
 
 }

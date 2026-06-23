@@ -51,7 +51,7 @@
 				AND CODE = 'B' AND REPLY_STATUS = 'Y'
 	</select>
 
-	<select id="selectReplyList" parameterType="map" resultType="ReplyListResponseDTO">
+	<select id="selectReplyList" parameterType="map" resultType="com.moa.backend.reply.dto.ReplyListResponseDTO">
 	        SELECT 
 	            R.REPLY_ID,
 	            R.MEMBER_ID,

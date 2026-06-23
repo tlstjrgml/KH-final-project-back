@@ -37,16 +37,88 @@
    	 SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
 	</select>
 	
-	<!-- 마이페이지 -->
-<select id="memberDetail" parameterType="long" resultType="com.moa.backend.member.model.dto.MemberResponseDto">
-    SELECT M.EMAIL, MD.NAME, M.NICKNAME, MD.BIRTH_DATE, MD.GENDER, MD.PHONE, MD.REGION,
-           MD.JOB_STATUS, MD.INCOME_LEVEL, MD.PROFILE_IMG,
-           (SELECT COUNT(*) FROM BOARD WHERE MEMBER_ID = #{memberId} AND BOARD_STATUS = 'Y') AS BOARD_COUNT,
-           (SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}) AS WISH_COUNT,
-           (SELECT COUNT(*) FROM REPLY WHERE MEMBER_ID = #{memberId} AND REPLY_STATUS = 'Y') AS REPLY_COUNT
-    FROM MEMBER M
-    LEFT JOIN MEMBER_DETAIL MD ON M.MEMBER_ID = MD.MEMBER_ID
-    WHERE M.MEMBER_ID = #{memberId}
-</select>
+	<select id="getTotalMemberCount" resultType="int">
+		SELECT COUNT(*) FROM MEMBER
+	</select>
+
+	<select id="getSignupTrend" resultType="java.util.Map">
+		SELECT 
+			d."date",
+			COUNT(m.MEMBER_ID) AS "users"
+		FROM (
+			SELECT TO_CHAR(SYSDATE - 7 + LEVEL, 'MM-DD') AS "date"
+			FROM DUAL
+			CONNECT BY LEVEL &lt;= 7
+		) d
+		LEFT JOIN MEMBER m ON TO_CHAR(m.SIGNUP_DATE, 'MM-DD') = d."date"
+		GROUP BY d."date"
+		ORDER BY d."date" ASC
+	</select>
+
+	<select id="getTopWelfare" resultType="java.util.Map">
+	    SELECT * FROM (
+	        SELECT 
+	            w.LCLSF_NM AS "title",
+	            /* 카테고리별로 조회수와 찜 횟수를 더해서 합계를 냅니다. */
+	            SUM(NVL(b.total_views, 0)) AS "views",
+	            SUM(NVL(wh.total_wishes, 0)) AS "wishes",
+	            (SUM(NVL(b.total_views, 0)) + SUM(NVL(wh.total_wishes, 0))) AS "score"
+	        FROM WELFARE w
+	        LEFT JOIN (
+	            SELECT WELFARE_ID, SUM(VIEWS) AS total_views
+	            FROM BOARD
+	            WHERE BOARD_TYPE = 'REV'
+	            GROUP BY WELFARE_ID
+	        ) b ON w.WELFARE_ID = b.WELFARE_ID
+	        LEFT JOIN (
+	            SELECT WELFARE_ID, COUNT(*) AS total_wishes
+	            FROM WISH
+	            GROUP BY WELFARE_ID
+	        ) wh ON w.WELFARE_ID = wh.WELFARE_ID
+	        /* 카테고리(LCLSF_NM) 단위로 묶어줍니다. */
+	        GROUP BY w.LCLSF_NM
+	        ORDER BY "score" DESC
+	    ) WHERE ROWNUM &lt;= 10
+	 </select>
+
+  <!-- 마이페이지 -->
+	<select id="memberDetail" parameterType="long" resultType="com.moa.backend.member.model.dto.MemberResponseDto">
+	    SELECT M.EMAIL, MD.NAME, M.NICKNAME, MD.BIRTH_DATE, MD.GENDER, MD.PHONE, MD.REGION,
+	           MD.JOB_STATUS, MD.INCOME_LEVEL, MD.PROFILE_IMG,
+	           (SELECT COUNT(*) FROM BOARD WHERE MEMBER_ID = #{memberId} AND BOARD_STATUS = 'Y') AS BOARD_COUNT,
+	           (SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}) AS WISH_COUNT,
+	           (SELECT COUNT(*) FROM REPLY WHERE MEMBER_ID = #{memberId} AND REPLY_STATUS = 'Y') AS REPLY_COUNT
+	    FROM MEMBER M
+	    LEFT JOIN MEMBER_DETAIL MD ON M.MEMBER_ID = MD.MEMBER_ID
+	    WHERE M.MEMBER_ID = #{memberId}
+	</select>
 	
+	<!--마이페이지 내가 작성한 게시글 조회-->
+	<select id="selectMyBoards" parameterType = "long" resultType = "com.moa.backend.board.dto.BoardResponseDto">
+		SELECT B.BOARD_ID, B.BOARD_TYPE, B.BOARD_TITLE, B.VIEWS, B.CREATE_DATE,
+       (SELECT COUNT(*) FROM LIKES WHERE BOARD_ID = B.BOARD_ID) AS LIKES
+		FROM BOARD B
+		WHERE B.MEMBER_ID = #{memberId}
+		  AND B.BOARD_STATUS = 'Y'
+	</select>
+	
+	<!--마이페이지 내가 작성한 댓글 조회-->
+	<select id = "selectMyReplies" parameterType = "long" resultType = "com.moa.backend.member.model.dto.ReplyResponseDto">
+		SELECT 
+        R.REPLY_ID AS replyId, 
+        R.REPLY_CONTENT AS replyContent, 
+        R.CREATE_DATE AS createDate, 
+        R.CODE AS code, 
+        B.BOARD_TYPE AS boardType,
+        B.BOARD_ID AS boardId
+    FROM REPLY R
+    JOIN BOARD B ON B.BOARD_ID = (
+        CASE 
+            WHEN R.CODE = 'B' THEN R.REF_ID
+            WHEN R.CODE = 'R' THEN (SELECT P.REF_ID FROM REPLY P WHERE P.REPLY_ID = R.REF_ID)
+        END
+    )
+    WHERE R.MEMBER_ID = #{memberId}
+    ORDER BY R.CREATE_DATE DESC
+	</select>
 </mapper>

@@ -59,5 +59,10 @@ public class CustomUserDetails implements UserDetails{
 		return member.getMemberId();
 	}
 	
+	// Member 객체에서 관리자 여부를 꺼내주는 편의용 메서드
+	public String getIsAdmin() {
+		return member.getIsAdmin();
+	}
+	
 	
 }

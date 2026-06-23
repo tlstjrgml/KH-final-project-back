@@ -119,13 +119,14 @@
 	</update>
 
 	<update id="updateBoard" parameterType="Board">
-		UPDATE BOARD
-		SET BOARD_TITLE = #{boardTitle},
-			BOARD_CONTENT = #{boardContent},
-			MODIFY_DATE = SYSDATE
-		WHERE BOARD_ID = #{boardId}
-			AND BOARD_STATUS = 'Y'
-	</update>
+    UPDATE BOARD
+    SET BOARD_TITLE = #{boardTitle},
+        BOARD_CONTENT = #{boardContent},
+        WELFARE_ID = #{welfareId},
+        MODIFY_DATE = SYSDATE
+    WHERE BOARD_ID = #{boardId}
+        AND BOARD_STATUS = 'Y'
+</update>
 	
 	<select id="selectBoardCount" resultType="int">
         SELECT COUNT(*)
@@ -205,5 +206,33 @@
 		WHERE 
 			BOARD_ID = #{arg0} 
 	</update>
+    <select id="getTop5" resultType="BoardListResponseDTO">
+	    SELECT 
+	        B.BOARD_ID,
+	        B.BOARD_TITLE,
+	        B.VIEWS,
+	        NVL(L.LIKE_COUNT, 0) AS likeCount
+	    FROM BOARD B
+	    LEFT JOIN (
+	        SELECT BOARD_ID, COUNT(*) AS LIKE_COUNT
+	        FROM LIKES
+	        GROUP BY BOARD_ID
+	    ) L ON (B.BOARD_ID = L.BOARD_ID)
+	    WHERE B.BOARD_STATUS = 'Y'
+	    AND B.BOARD_TYPE = #{boardType}
+	    ORDER BY B.VIEWS DESC
+	    FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getRecentNotice" resultType="BoardListResponseDTO">
+	    SELECT 
+	        BOARD_ID,
+	        BOARD_TITLE
+	    FROM BOARD
+	    WHERE BOARD_STATUS = 'Y'
+	    AND BOARD_TYPE = 'NOT'
+	    ORDER BY CREATE_DATE DESC
+	    FETCH FIRST 5 ROWS ONLY
+	</select>
     
 </mapper>
