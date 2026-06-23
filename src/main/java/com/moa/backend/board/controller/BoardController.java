@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,7 +88,7 @@ public class BoardController {
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		try {
 			// 로그인한 유저의 ID를 함께 넘겨서 본인 글인지 서비스에서 한 번 더 검증
-			bService.deleteBoard(boardId, userDetails.getMemberId());
+			bService.deleteBoard(boardId, userDetails);
 
 			return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
 		} catch (IllegalArgumentException e) {
