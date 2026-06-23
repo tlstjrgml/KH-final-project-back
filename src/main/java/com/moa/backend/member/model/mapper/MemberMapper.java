@@ -8,7 +8,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.moa.backend.board.dto.BoardResponseDto;
+import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
+import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
 import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
@@ -37,4 +39,10 @@ public interface MemberMapper {
 	List<BoardResponseDto> selectMyBoards(@Param("memberId") Long memberId);
 
 	List<ReplyResponseDto> selectMyReplies(@Param("memberId") Long memberId);
+	
+	int updateMember(@Param("memberId") Long memberId, @Param("dto")MemberUpdateRequestDto dto);
+	
+	int updateMemberDetail(@Param("memberId") Long memberId, @Param("dto")MemberUpdateRequestDto dto);
+	
+	boolean updatePassword(@Param("memberId") Long memberId, @Param("encodedPassword")String encodedPassword);
 }
