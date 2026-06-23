@@ -3,6 +3,7 @@ package com.moa.backend.reply.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,6 +85,25 @@ public class ReplyController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("댓글 목록을 불러오는 중 오류가 발생했습니다.");
         }
+	}
+	
+	// 댓글 삭제
+	@DeleteMapping("/{replyId}")
+	public ResponseEntity<?> deleteReply(
+			@PathVariable("replyId") Long replyId,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		try {
+			// 로그인한 유저의 ID를 함께 넘겨서 본인 댓글인지 서비스에서 한 번 더 검증
+			replyService.deleteReply(replyId, userDetails.getMemberId());
+
+			return ResponseEntity.ok("댓글이 성공적으로 삭제되었습니다.");
+		} catch (IllegalArgumentException e) {
+			// 본인 댓글이 아니거나 없는 글일 때 400 에러
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 오류가 발생했습니다.");
+		}
 	}
 }
 
