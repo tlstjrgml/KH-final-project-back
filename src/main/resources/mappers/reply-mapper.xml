@@ -89,6 +89,14 @@
 	            R.CODE ASC,
 	            R.REPLY_ID ASC
 	</select>
+	
+	<update id="deleteReply" parameterType="long">
+		UPDATE REPLY
+		SET
+			REPLY_STATUS = 'N'
+		WHERE 
+			REPLY_ID = #{replyId}
+	</update>
 </mapper>
 
 

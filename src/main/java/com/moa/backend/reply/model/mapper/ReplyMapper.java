@@ -20,4 +20,6 @@ public interface ReplyMapper {
 	int selectReplyCount(Map<String, Object> params);
 
 	List<ReplyListResponseDTO> selectReplyList(Map<String, Object> params);
+
+	int deleteReply(Long replyId);
 }

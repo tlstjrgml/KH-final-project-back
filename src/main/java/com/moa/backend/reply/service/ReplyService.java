@@ -65,6 +65,25 @@ public class ReplyService {
 
 		return new PageResponse<>(content, pagination);
 	}
+
+	public void deleteReply(Long replyId, Long memberId) {
+		Reply reply = replyMapper.selectReplyById(replyId);
+
+		if (reply == null) {
+			throw new IllegalArgumentException("존재하지 않거나 이미 삭제된 댓글입니다.");
+		}
+
+		// 2. 글 작성자 ID와 현재 로그인한 유저 ID가 일치하는지 확인
+		if (!reply.getMemberId().equals(memberId)) {
+			throw new IllegalArgumentException("본인이 작성한 댓글만 삭제할 수 있습니다.");
+		}
+
+		// 3. 검증 통과 시 상태값 업데이트 때리기
+		int result = replyMapper.deleteReply(replyId);
+		if (result == 0) {
+			throw new IllegalArgumentException("삭제 처리에 실패했습니다.");
+		}
+	}
 }
 
 
