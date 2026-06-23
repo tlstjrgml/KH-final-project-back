@@ -4,6 +4,7 @@
 
 <mapper namespace="com.moa.backend.welfare.model.mapper.WelfareMapper">
 
+	<!-- DB에 API정보 저장 -->
     <insert id="insertWelfare" parameterType="com.moa.backend.welfare.model.vo.Welfare">
         INSERT INTO WELFARE (
             PLCY_NO, LCLSF_NM, MCLSF_NM, MRG_STTS_CD, SCHOOL_CD, PLCY_MAJOR_CD, JOB_CD, SBIZ_CD, SPRT_TRGT_MIN_AGE,
@@ -13,7 +14,8 @@
             #{sprtTrgtMaxAge}, #{sprtTrgtAgeLmtYn}, #{earnMinAmt}, #{earnMaxAmt}, #{earnEtcCn}, #{fullData}
         )
     </insert>
-
+	
+	<!-- 메인화면 복지서비스 4개 -->
     <select id="getMainWelfare" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
         SELECT * FROM (
             SELECT
@@ -27,7 +29,8 @@
         )
         WHERE ROWNUM &lt;= 4
     </select>
-
+	
+	<!-- 메인화면 인기복지서비스 10개 -->
     <select id="getTopten" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
 	    SELECT *
 	    FROM (
@@ -47,8 +50,9 @@
 	        ORDER BY wishCount DESC, w.WELFARE_ID DESC
 	    )
 	    WHERE ROWNUM &lt;= 10
- </select>
-
+ 	</select>
+	
+	<!-- 복지서비스화면 모든 복지리스트 불러오기 -->
     <select id="getWelfareDetail" parameterType="Long" resultType="com.moa.backend.welfare.model.vo.WelfareDetailDTO">
         SELECT
             WELFARE_ID AS welfareId,
@@ -70,7 +74,8 @@
         FROM WELFARE
         WHERE WELFARE_ID = #{id}
     </select>
-
+	
+	<!-- 복지서비스 상세화면 하단 관련복지 추천 -->
     <select id="getRelatedWelfare" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
         SELECT * FROM (
             SELECT
@@ -86,7 +91,8 @@
         )
         WHERE ROWNUM &lt;= 3
     </select>
-
+	
+	<!-- 복지리스트화면에서 필터링한 애들만 뽑아오는 쿼리 -->
     <select id="getWelfareList" parameterType="com.moa.backend.welfare.model.vo.WelfareSearchDTO" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
 		    SELECT
 		        w.WELFARE_ID AS welfareId,
@@ -153,7 +159,8 @@
 		    FETCH NEXT #{limit} ROWS ONLY
 		</select>
 
-    <select id="getWelfareCount" parameterType="com.moa.backend.welfare.model.vo.WelfareSearchDTO" resultType="int">
+		<!-- 필터조건으로 몇 개가있는지 카운트하는 쿼리 -->
+    	<select id="getWelfareCount" parameterType="com.moa.backend.welfare.model.vo.WelfareSearchDTO" resultType="int">
         SELECT COUNT(*) FROM WELFARE
         WHERE 1=1
         <if test="keyword != null and keyword != ''">
@@ -205,6 +212,7 @@
         </if>
     </select>
     
+    <!-- 메인화면 개인 복지추천 서비스 -->
     <select id="getRecommend" parameterType="map" resultType="com.moa.backend.welfare.model.vo.WelfareListDTO">
 	    SELECT *
 	    FROM (
@@ -216,31 +224,36 @@
 	            JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm
 	        FROM WELFARE w
 	        <where>
-	            <if test="memberId != null">
-	                AND w.LCLSF_NM IN (
-	                    SELECT DISTINCT w2.LCLSF_NM
-	                    FROM WELFARE w2
-	                    JOIN WISH wi ON w2.WELFARE_ID = wi.WELFARE_ID
-	                    WHERE wi.MEMBER_ID = #{memberId}
-	                )
+	            <if test="hasWish == true">
+				    AND w.LCLSF_NM IN (
+				        SELECT DISTINCT w2.LCLSF_NM
+				        FROM WELFARE w2
+				        JOIN WISH wi ON w2.WELFARE_ID = wi.WELFARE_ID
+				        WHERE wi.MEMBER_ID = #{memberId}
+				    )
+				</if>
+	            <if test="region != null and region != ''">
+	                AND JSON_VALUE(w.FULL_DATA, '$.zipCd') LIKE #{region} || '%'
 	            </if>
-	            <!--<if test="region != null and region != ''">
-	                AND EXISTS (
-	                    SELECT 1 FROM POLICY_REGION PR
-	                    WHERE PR.WELFARE_ID = w.WELFARE_ID
-	                    AND PR.ZIP_CD LIKE #{region} || '%'
-	                )
-	            </if>-->
-	            <if test="jobStatus != null and jobStatus != ''">
-	                AND JSON_VALUE(w.FULL_DATA, '$.emplmSttsCd') = #{jobStatus}
-	            </if>
-	            <if test="incomeLevel != null and incomeLevel > 0">
-	                AND JSON_VALUE(w.FULL_DATA, '$.ernIncmSeCd') = #{incomeLevel}
-	            </if>
+	            <if test="schoolCd != null and schoolCd != ''">
+				    AND w.SCHOOL_CD LIKE '%' || #{schoolCd} || '%'
+				</if>
+				<if test="jobCd != null and jobCd != ''">
+				    AND w.JOB_CD LIKE '%' || #{jobCd} || '%'
+				</if>
+	            <if test="earnCndSeCd != null and earnCndSeCd != ''">
+				    AND JSON_VALUE(w.FULL_DATA, '$.earnCndSeCd') = #{earnCndSeCd}
+				</if>
 	        </where>
 	        ORDER BY DBMS_RANDOM.VALUE
 	    )
 	    WHERE ROWNUM &lt;= 4
 	</select>
+	
+	
+	<select id="countWish" parameterType="Long" resultType="int">
+	    SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}
+	</select>
+		
 
 </mapper>
