@@ -121,4 +121,26 @@
     WHERE R.MEMBER_ID = #{memberId}
     ORDER BY R.CREATE_DATE DESC
 	</select>
+	
+	<!--member테이블 수정-->
+	<update id="updateMember">
+	update member
+	set nickname=#{dto.nickname} ,email=#{dto.email}
+	where member_id = #{memberId}
+	</update>
+	
+	<!--memberDetail테이블 수정-->
+	<update id="updateMemberDetail">
+	update member_detail
+	set name = #{dto.name}, birth_date = #{dto.birthDate}, gender = #{dto.gender}, phone = #{dto.phone},
+	region = #{dto.region}, job_status = #{dto.jobStatus}, income_level = #{dto.incomeLevel}
+	where member_id = #{memberId}
+	</update>
+	
+	<!--비밀번호 수정-->
+	<update id="updatePassword">
+	update member
+	set password = #{encodedPassword}
+	where member_id = #{memberId}
+	</update>
 </mapper>

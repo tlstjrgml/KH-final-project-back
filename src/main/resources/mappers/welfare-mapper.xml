@@ -224,13 +224,13 @@
 	                    WHERE wi.MEMBER_ID = #{memberId}
 	                )
 	            </if>
-	            <if test="region != null and region != ''">
+	            <!--<if test="region != null and region != ''">
 	                AND EXISTS (
 	                    SELECT 1 FROM POLICY_REGION PR
 	                    WHERE PR.WELFARE_ID = w.WELFARE_ID
 	                    AND PR.ZIP_CD LIKE #{region} || '%'
 	                )
-	            </if>
+	            </if>-->
 	            <if test="jobStatus != null and jobStatus != ''">
 	                AND JSON_VALUE(w.FULL_DATA, '$.emplmSttsCd') = #{jobStatus}
 	            </if>

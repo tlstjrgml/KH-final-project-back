@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
@@ -21,6 +22,8 @@ import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.service.MemberService;
+import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
+import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -265,4 +268,23 @@ public class MemberController {
 		List<ReplyResponseDto> dtoList = mService.selectMyReplies(memberId); 
 		return ResponseEntity.ok(dtoList);
 	}
+	
+	@PatchMapping("/me")
+	public ResponseEntity<?> updateMember(
+			@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberUpdateRequestDto dto){
+		long memberId = userDetails.getMemberId();
+		mService.updateMember(memberId, dto);
+		return ResponseEntity.ok("수정 완료");
+	}
+	
+	@PatchMapping("/me/password")
+	public ResponseEntity<?> updatePassword(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberPasswordUpdateRequestDto dto){
+		long memberId = userDetails.getMemberId();
+		boolean result = mService.updatePassword(memberId, dto);
+		if(!result) {
+			return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다");
+		}
+		return ResponseEntity.ok("비밀번호 변경 완료");
+	}
+	
 }
