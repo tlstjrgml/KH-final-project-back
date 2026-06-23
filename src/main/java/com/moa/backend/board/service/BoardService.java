@@ -2,7 +2,6 @@ package com.moa.backend.board.service;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +16,6 @@ import com.moa.backend.board.model.vo.Attachment;
 import com.moa.backend.board.model.vo.Board;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.util.FileUtil;
-import com.moa.backend.common.util.page.PageRequest;
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.common.util.page.Pagination;
 import com.moa.backend.likes.model.mapper.LikesMapper;
@@ -106,7 +104,7 @@ public class BoardService {
 		return dto;
 	}
 
-	public void deleteBoard(Long boardId, Long memberId) {
+	public void deleteBoard(Long boardId, CustomUserDetails userDetails) {
 		// 1. 상세조회 때 썼던 매퍼 재활용해서 글 정보 가져오기
 		BoardDetailResponseDTO board = boardMapper.selectBoardDetail(boardId);
 
@@ -114,10 +112,14 @@ public class BoardService {
 			throw new IllegalArgumentException("존재하지 않거나 이미 삭제된 게시글입니다.");
 		}
 
-		// 2. 글 작성자 ID와 현재 로그인한 유저 ID가 일치하는지 확인
-		if (!board.getMemberId().equals(memberId)) {
-			throw new IllegalArgumentException("본인이 작성한 글만 삭제할 수 있습니다.");
-		}
+		// 💡 로그인한 유저의 권한 정보에서 'ROLE_ADMIN'이 포함되어 있는지 확인
+	    boolean isAdmin = userDetails.getAuthorities().stream()
+	            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+	    // 💡 관리자가 '아니면서' 동시에 작성자 본인도 '아닐 때만' 예외를 발생시킵니다.
+	    if (!isAdmin && !board.getMemberId().equals(userDetails.getMemberId())) {
+	        throw new IllegalArgumentException("본인이 작성한 글만 삭제할 수 있습니다.");
+	    }
 
 		// 3. 검증 통과 시 상태값 업데이트 때리기
 		int result = boardMapper.deleteBoard(boardId);
@@ -152,7 +154,12 @@ public class BoardService {
 			throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
 		}
 		
-		if (!originalBoard.getMemberId().equals(userDetails.getMemberId())) {
+		// 💡 로그인한 유저의 권한 정보에서 'ROLE_ADMIN'이 포함되어 있는지 확인
+		boolean isAdmin = userDetails.getAuthorities().stream()
+						.anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+		// 💡 관리자가 '아니면서' 동시에 작성자 본인도 '아닐 때만' 예외를 발생시킵니다.
+		if (!isAdmin && !originalBoard.getMemberId().equals(userDetails.getMemberId())) {
 			throw new IllegalArgumentException("본인이 작성한 게시글만 수정할 수 있습니다.");
 		}
 
