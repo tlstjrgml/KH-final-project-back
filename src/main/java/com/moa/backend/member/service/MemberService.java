@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
@@ -17,6 +19,7 @@ import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.mapper.MemberMapper;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
+import com.moa.backend.common.service.S3UploadService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 	private final MemberMapper mapper;
 	private final BCryptPasswordEncoder bcrypt;
+	private final S3UploadService s3UploadService;
+	
 	public int insertMember(Member m) {
 		return mapper.insertMember(m);
 	}
@@ -88,6 +93,12 @@ public class MemberService {
 		
 	}
 	
+	//프로필 이미지
+	public String updateProfileImg(Long memberId, MultipartFile file) throws IOException {
+	    String url = s3UploadService.uploadFile(file);
+	    mapper.updateProfileImg(memberId, url);
+	    return url;
+	}
 
 }
 

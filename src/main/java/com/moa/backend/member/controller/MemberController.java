@@ -1,5 +1,6 @@
 package com.moa.backend.member.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,22 +9,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.config.jwt.JwtProvider;
 import com.moa.backend.common.util.EmailAuthProvider;
+import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
+import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
 import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.vo.Member;
+import com.moa.backend.member.model.vo.MemberDetail;
 import com.moa.backend.member.service.MemberService;
-import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
-import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -107,6 +111,9 @@ public class MemberController {
 		int result = mService.insertMember(member);
 
 		if (result > 0) {
+			MemberDetail memberDetail = new MemberDetail();
+			memberDetail.setMemberId(member.getMemberId());
+			mService.insertMemberDetail(memberDetail);
 			return ResponseEntity.ok("회원가입 성공");
 		} else {
 			return ResponseEntity.badRequest().body("회원가입 실패");
@@ -285,6 +292,19 @@ public class MemberController {
 			return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다");
 		}
 		return ResponseEntity.ok("비밀번호 변경 완료");
+	}
+	
+	//프로필 이미지
+	@PatchMapping("/me/profile-image")
+	public ResponseEntity<?> updateProfileImage(@AuthenticationPrincipal CustomUserDetails userDetails,@RequestParam("file")MultipartFile file){
+		long memberId = userDetails.getMemberId();
+		try {
+		    String url = mService.updateProfileImg(memberId, file);
+		    return ResponseEntity.ok(url);
+		} catch (IOException e) {
+			return ResponseEntity.badRequest().body("프로필 이미지 업로드 실패: " + e.getMessage());
+		}
+		
 	}
 	
 }
