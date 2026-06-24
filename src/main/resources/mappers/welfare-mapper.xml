@@ -121,7 +121,7 @@
 		    <if test="region != null and region.size() > 0">
 		        AND (
 		            <foreach collection="region" item="r" separator=" OR ">
-		                JSON_VALUE(w.FULL_DATA, '$.zipCd') LIKE #{r} || '%'
+		                 REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.zipCd'), '(^|,)' || #{r} || '[0-9]{3}(,|$)')
 		            </foreach>
 		        )
 		    </if>
@@ -143,6 +143,13 @@
 		            </foreach>
 		        )
 		    </if>
+		    <if test="school != null and school.size() > 0">
+			    AND (
+			        <foreach collection="school" item="s" separator=" OR ">
+			            w.SCHOOL_CD LIKE '%' || #{s} || '%'
+			        </foreach>
+			    )
+			</if>
 		    GROUP BY w.WELFARE_ID, w.LCLSF_NM,
 		        JSON_VALUE(w.FULL_DATA, '$.plcyNm'),
 		        JSON_VALUE(w.FULL_DATA, '$.aplyYmd'),
@@ -186,7 +193,7 @@
         <if test="region != null and region.size() > 0">
             AND (
                 <foreach collection="region" item="r" separator=" OR ">
-                    JSON_VALUE(FULL_DATA, '$.zipCd') LIKE #{r} || '%'
+                     REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.zipCd'), '(^|,)' || #{r} || '[0-9]{3}(,|$)')
                 </foreach>
             )
         </if>
@@ -210,6 +217,13 @@
                 </foreach>
             )
         </if>
+        <if test="school != null and school.size() > 0">
+		    AND (
+		        <foreach collection="school" item="s" separator=" OR ">
+		            SCHOOL_CD LIKE '%' || #{s} || '%'
+		        </foreach>
+		    )
+		</if>
     </select>
     
     <!-- 메인화면 개인 복지추천 서비스 -->

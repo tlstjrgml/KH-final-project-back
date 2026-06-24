@@ -60,9 +60,10 @@ public class WelfareController {
 	        @RequestParam(name = "income", defaultValue = "") List<String> income,
 	        @RequestParam(name = "job", defaultValue = "") List<String> job,
 	        @RequestParam(name = "page", defaultValue = "1") int page,
-	        @RequestParam(name = "sort", defaultValue = "") String sort
+	        @RequestParam(name = "sort", defaultValue = "") String sort,
+	        @RequestParam(name = "school", defaultValue = "") List<String> school
 	    ) {
-        return ResponseEntity.ok(welfareService.getWelfareList(keyword, lclsfNm, region, ageMin, ageMax, income, job, sort, page));
+        return ResponseEntity.ok(welfareService.getWelfareList(keyword, lclsfNm, region, ageMin, ageMax, income, job, school, sort, page));
     }
     
     @GetMapping("/recommend")

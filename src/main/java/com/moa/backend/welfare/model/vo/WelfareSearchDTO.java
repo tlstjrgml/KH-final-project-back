@@ -18,4 +18,5 @@ public class WelfareSearchDTO extends PageRequest {
     private String sort;
     private int ageMin;
     private int ageMax;
+    private List<String> school;
 }
