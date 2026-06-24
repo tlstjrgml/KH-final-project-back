@@ -10,17 +10,30 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+<<<<<<< Updated upstream
+=======
+import org.springframework.web.bind.annotation.PathVariable;
+>>>>>>> Stashed changes
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+<<<<<<< Updated upstream
 import org.springframework.web.multipart.MultipartFile;
+=======
+>>>>>>> Stashed changes
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.config.jwt.JwtProvider;
 import com.moa.backend.common.util.EmailAuthProvider;
+<<<<<<< Updated upstream
+=======
+import com.moa.backend.common.util.page.PageRequest;
+import com.moa.backend.common.util.page.PageResponse;
+import com.moa.backend.common.util.page.Pagination;
+>>>>>>> Stashed changes
 import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
@@ -307,4 +320,74 @@ public class MemberController {
 		
 	}
 	
+	// 관리자 전용 회원 목록 조회
+	@GetMapping("/admin/list")
+	public ResponseEntity<?> getAdminMemberList(@AuthenticationPrincipal CustomUserDetails userDetails,
+	        PageRequest pageRequest, 
+	        @RequestParam(value = "keyword", required = false) String keyword,
+	        @RequestParam(value = "sort", defaultValue = "latest") String sort,
+	        @RequestParam(value = "status", defaultValue = "ACTIVE") String status) { // status 추가
+
+	    if (userDetails == null || !"Y".equals(userDetails.getIsAdmin())) {
+	        return ResponseEntity.status(403).body("관리자 권한이 없습니다.");
+	    }
+
+	    try {
+	        Map<String, Object> paramMap = new HashMap<>();
+	        paramMap.put("sort", sort);
+	        paramMap.put("keyword", keyword);
+	        paramMap.put("status", status); // Map에 담아서 Mapper로 전달
+
+	        paramMap.put("limit", pageRequest.getLimit());
+	        paramMap.put("offset", pageRequest.getOffset());
+
+	        int totalElements = mService.getAdminTotalMemberCount(paramMap);
+	        Pagination pagination = new Pagination(pageRequest, totalElements);
+
+	        List<Member> content = mService.getAdminMemberList(paramMap);
+
+	        PageResponse<Member> response = new PageResponse<>(content, pagination);
+
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(500).body("회원 목록 조회 중 서버 오류가 발생했습니다.");
+	    }
+	}
+
+	// 관리자 전용 회원 강제 탈퇴
+	@PatchMapping("/admin/{memberId}/withdraw")
+	public ResponseEntity<?> withdrawMember(@AuthenticationPrincipal CustomUserDetails userDetails,
+			@PathVariable("memberId") Long memberId) {
+
+		if (userDetails == null || !"Y".equals(userDetails.getIsAdmin())) {
+			return ResponseEntity.status(403).body("관리자 권한이 없습니다.");
+		}
+
+		try {
+			mService.kickMember(memberId);
+			return ResponseEntity.ok("성공적으로 탈퇴 처리되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("탈퇴 처리 중 서버 오류가 발생했습니다.");
+		}
+	}
+	
+	// 관리자 전용 회원 복구
+	@PatchMapping("/admin/{memberId}/restore")
+	public ResponseEntity<?> restoreMember(@AuthenticationPrincipal CustomUserDetails userDetails,
+	        @PathVariable("memberId") Long memberId) {
+
+	    if (userDetails == null || !"Y".equals(userDetails.getIsAdmin())) {
+	        return ResponseEntity.status(403).body("관리자 권한이 없습니다.");
+	    }
+
+	    try {
+	        mService.restoreMember(memberId); // 서비스 메서드 호출
+	        return ResponseEntity.ok("성공적으로 복구 처리되었습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(500).body("복구 처리 중 서버 오류가 발생했습니다.");
+	    }
+	}
 }

@@ -38,7 +38,9 @@
 	</select>
 	
 	<select id="getTotalMemberCount" resultType="int">
-		SELECT COUNT(*) FROM MEMBER
+		SELECT COUNT(*)
+		FROM MEMBER
+		WHERE MEMBER_STATUS = 'ACTIVE'
 	</select>
 
 	<select id="getSignupTrend" resultType="java.util.Map">
@@ -160,5 +162,56 @@
 	update member_detail
 	set profile_img = #{profileImgUrl}
 	where member_id = #{memberId}
+	</update>
+	
+	<select id="getAdminTotalMemberCount" parameterType="map" resultType="int">
+		SELECT COUNT(*) 
+		FROM MEMBER
+		WHERE MEMBER_STATUS = 'ACTIVE'
+		<if test="keyword != null and keyword != ''">
+			AND (EMAIL LIKE '%' || #{keyword} || '%' OR NICKNAME LIKE '%' || #{keyword} || '%')
+		</if>
+	</select>
+
+	<select id="getAdminMemberList" parameterType="map" resultType="com.moa.backend.member.model.vo.Member">
+	    SELECT 
+	        MEMBER_ID AS memberId,
+	        EMAIL AS email,
+	        NICKNAME AS nickname,
+	        SIGNUP_DATE AS signupDate
+	    FROM MEMBER
+	    WHERE MEMBER_STATUS = #{status}
+	    
+	    <if test="keyword != null and keyword != ''">
+	        AND (EMAIL LIKE '%' || #{keyword} || '%' OR NICKNAME LIKE '%' || #{keyword} || '%')
+	    </if>
+	    
+	    <choose>
+	        <when test="sort == 'oldest'">
+	            ORDER BY SIGNUP_DATE ASC
+	        </when>
+	        <when test="sort == 'name'">
+	            ORDER BY NICKNAME ASC
+	        </when>
+	        <otherwise>
+	            ORDER BY SIGNUP_DATE DESC
+	        </otherwise>
+	    </choose>
+	    
+	    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+	</select>
+
+	<update id="withdrawMember" parameterType="long">
+		UPDATE MEMBER 
+		SET MEMBER_STATUS = 'BANNED',
+			DELETED_DATE = SYSDATE
+		WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<update id="restoreMember" parameterType="long">
+	    UPDATE MEMBER 
+	    SET MEMBER_STATUS = 'ACTIVE',
+	        DELETED_DATE = NULL
+	    WHERE MEMBER_ID = #{memberId}
 	</update>
 </mapper>

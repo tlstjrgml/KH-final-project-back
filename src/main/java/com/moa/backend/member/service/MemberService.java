@@ -1,15 +1,17 @@
 package com.moa.backend.member.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+<<<<<<< Updated upstream
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
+=======
+>>>>>>> Stashed changes
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
@@ -98,7 +100,27 @@ public class MemberService {
 	    String url = s3UploadService.uploadFile(file);
 	    mapper.updateProfileImg(memberId, url);
 	    return url;
+	    
+	// 회원 목록 조회용 총 데이터 개수
+	public int getAdminTotalMemberCount(Map<String, Object> paramMap) {
+		return mapper.getAdminTotalMemberCount(paramMap);
 	}
 
+	// 회원 목록 조회 (검색, 정렬, 페이징)
+	public List<Member> getAdminMemberList(Map<String, Object> paramMap) {
+		return mapper.getAdminMemberList(paramMap);
+	}
+
+	// 회원 강제 탈퇴
+	@Transactional
+	public void kickMember(Long memberId) {
+		mapper.withdrawMember(memberId);
+	}
+	
+	// 회원 복구
+    @Transactional
+    public void restoreMember(Long memberId) {
+        mapper.restoreMember(memberId);
+    }
 }
 
