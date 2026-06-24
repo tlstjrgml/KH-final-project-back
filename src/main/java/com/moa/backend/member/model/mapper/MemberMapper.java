@@ -48,4 +48,12 @@ public interface MemberMapper {
 	
 	//s3파일 업로드
 	void updateProfileImg(@Param("memberId") Long memberId, @Param("profileImgUrl") String profileImgUrl);
+
+	int getAdminTotalMemberCount(Map<String, Object> paramMap);
+
+	List<Member> getAdminMemberList(Map<String, Object> paramMap);
+
+	void withdrawMember(Long memberId);
+
+	void restoreMember(Long memberId);
 }
