@@ -10,6 +10,7 @@ import com.moa.backend.common.util.page.Pagination;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
+import com.moa.backend.report.dto.ReportUpdateRequestDTO;
 import com.moa.backend.report.model.mapper.ReportMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -41,4 +42,9 @@ public class ReportService {
 		return new PageResponse<>(reportList, pagination);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+    public boolean updateReport(ReportUpdateRequestDTO reportUpdateRequest) {
+        int result = reportMapper.updateReport(reportUpdateRequest);
+        return result > 0;
+    }
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
+import com.moa.backend.report.dto.ReportUpdateRequestDTO;
 
 @Mapper
 public interface ReportMapper {
@@ -16,4 +17,6 @@ public interface ReportMapper {
 	int selectReportCount(ReportPageRequestDTO reportPageRequest);
 
 	List<ReportListResponseDTO> selectReportList(ReportPageRequestDTO reportPageRequest);
+	
+	int updateReport(ReportUpdateRequestDTO dto);
 }

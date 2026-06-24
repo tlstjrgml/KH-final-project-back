@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
+import com.moa.backend.report.dto.ReportUpdateRequestDTO;
 import com.moa.backend.report.service.ReportService;
 
 import lombok.RequiredArgsConstructor;
@@ -62,6 +64,23 @@ public class ReportController {
 			e.printStackTrace();
 			return ResponseEntity.internalServerError().body("신고 목록을 불러오는 중 오류가 발생했습니다.");
 		}
+    }
+	
+	@PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/update")
+    public ResponseEntity<?> updateReport(@RequestBody ReportUpdateRequestDTO reportUpdateRequest) {
+        try {
+            boolean isUpdated = reportService.updateReport(reportUpdateRequest);
+            
+            if (isUpdated) {
+                return ResponseEntity.ok("신고 처리가 성공적으로 완료되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 신고 번호이거나 수정에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("신고 처리 중 서버 오류가 발생했습니다.");
+        }
     }
 	
 }
