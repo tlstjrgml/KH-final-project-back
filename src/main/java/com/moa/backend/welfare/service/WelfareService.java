@@ -45,9 +45,8 @@ public class WelfareService {
         return mapper.getRelatedWelfare(lclsfNm, excludeId);
     }
 
-    public PageResponse<WelfareListDTO> getWelfareList(String keyword, List<String> lclsfNm, List<String> region, int ageMin, int ageMax, List<String> income, List<String> job, String sort, int page) {
+    public PageResponse<WelfareListDTO> getWelfareList(String keyword, List<String> lclsfNm, List<String> region, int ageMin, int ageMax, List<String> income, List<String> job, List<String> school, String sort, int page) {
         int limit = 14;
-
         WelfareSearchDTO params = new WelfareSearchDTO();
         params.setKeyword(keyword);
         params.setLclsfNm(lclsfNm);
@@ -56,15 +55,13 @@ public class WelfareService {
         params.setAgeMax(ageMax);
         params.setIncome(income);
         params.setJob(job);
+        params.setSchool(school);
         params.setSort(sort);
         params.setPage(page);
         params.setLimit(limit);
-
         int totalItems = mapper.getWelfareCount(params);
         Pagination pagination = new Pagination(params, totalItems);
-
         List<WelfareListDTO> list = mapper.getWelfareList(params);
-
         return new PageResponse<>(list, pagination);
     }
 
