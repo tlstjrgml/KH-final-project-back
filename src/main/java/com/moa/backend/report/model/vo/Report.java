@@ -22,7 +22,7 @@ public class Report {
 	private LocalDateTime reportDate;
 	private String reason; 		// NULL 허용 
 	
-	private String status;		//PENDING, DONE, REJECT / DEFAULT: PENDING)
+	private String ;		//PENDING, DONE, REJECT / DEFAULT: PENDING)
 	private String reportResult;
 	private Long memberId;
 }
