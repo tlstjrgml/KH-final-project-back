@@ -224,26 +224,31 @@
 	            JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm') AS sprvsnInstCdNm
 	        FROM WELFARE w
 	        <where>
-	            <if test="hasWish == true">
-				    AND w.LCLSF_NM IN (
-				        SELECT DISTINCT w2.LCLSF_NM
-				        FROM WELFARE w2
-				        JOIN WISH wi ON w2.WELFARE_ID = wi.WELFARE_ID
-				        WHERE wi.MEMBER_ID = #{memberId}
-				    )
-				</if>
 	            <if test="region != null and region != ''">
 	                AND JSON_VALUE(w.FULL_DATA, '$.zipCd') LIKE #{region} || '%'
 	            </if>
 	            <if test="schoolCd != null and schoolCd != ''">
-				    AND w.SCHOOL_CD LIKE '%' || #{schoolCd} || '%'
-				</if>
-				<if test="jobCd != null and jobCd != ''">
-				    AND w.JOB_CD LIKE '%' || #{jobCd} || '%'
-				</if>
-	            <if test="earnCndSeCd != null and earnCndSeCd != ''">
-				    AND JSON_VALUE(w.FULL_DATA, '$.earnCndSeCd') = #{earnCndSeCd}
-				</if>
+	                AND w.SCHOOL_CD LIKE '%' || #{schoolCd} || '%'
+	            </if>
+	            <if test="jobCd != null and jobCd != ''">
+	                AND w.JOB_CD LIKE '%' || #{jobCd} || '%'
+	            </if>
+	            <if test="hasWish == true or (earnCndSeCd != null and earnCndSeCd != '')">
+	                AND (
+	                    <if test="hasWish == true">
+	                        w.LCLSF_NM IN (
+	                            SELECT DISTINCT w2.LCLSF_NM
+	                            FROM WELFARE w2
+	                            JOIN WISH wi ON w2.WELFARE_ID = wi.WELFARE_ID
+	                            WHERE wi.MEMBER_ID = #{memberId}
+	                        )
+	                    </if>
+	                    <if test="hasWish == true and earnCndSeCd != null and earnCndSeCd != ''"> OR </if>
+	                    <if test="earnCndSeCd != null and earnCndSeCd != ''">
+	                        JSON_VALUE(w.FULL_DATA, '$.earnCndSeCd') = #{earnCndSeCd}
+	                    </if>
+	                )
+	            </if>
 	        </where>
 	        ORDER BY DBMS_RANDOM.VALUE
 	    )

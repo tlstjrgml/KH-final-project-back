@@ -31,4 +31,6 @@ public interface WelfareMapper {
 
 	List<WelfareListDTO> getRecommend(Map<String, Object> params);
 
+	int countWish(Long memberId);
+
 }

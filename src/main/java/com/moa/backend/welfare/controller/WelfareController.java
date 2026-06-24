@@ -67,9 +67,9 @@ public class WelfareController {
     
     @GetMapping("/recommend")
     public ResponseEntity<List<WelfareListDTO>> getRecommend(
-            @RequestParam(required = false) String region,
-            @RequestParam(required = false) String jobStatus,
-            @RequestParam(required = false, defaultValue = "0") int incomeLevel) {
+            @RequestParam(name = "region", required = false) String region,
+            @RequestParam(name = "jobStatus", required = false) String jobStatus,
+            @RequestParam(name = "incomeLevel", required = false, defaultValue = "0") int incomeLevel) {
         Long memberId = null;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
