@@ -50,6 +50,12 @@ public class BoardController {
 			@ModelAttribute BoardCreateRequest request,
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		
+		//  userDetails가 null인 경우 NullPointerException을 방지
+		if (userDetails == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                             .body("로그인 정보가 유효하지 않거나 토큰이 누락되었습니다. 다시 로그인해 주십시오.");
+	    }
+		
 		try {
 			request.setMemberId(userDetails.getMemberId());
 
