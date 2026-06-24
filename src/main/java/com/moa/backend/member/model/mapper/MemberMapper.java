@@ -56,5 +56,4 @@ public interface MemberMapper {
 	void withdrawMember(Long memberId);
 
 	void restoreMember(Long memberId);
->>>>>>> Stashed changes
 }

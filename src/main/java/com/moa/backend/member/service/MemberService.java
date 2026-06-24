@@ -1,19 +1,16 @@
 package com.moa.backend.member.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.io.IOException;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-<<<<<<< Updated upstream
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
-=======
->>>>>>> Stashed changes
 
 import com.moa.backend.board.dto.BoardResponseDto;
+import com.moa.backend.common.service.S3UploadService;
 import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
@@ -21,7 +18,6 @@ import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.mapper.MemberMapper;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
-import com.moa.backend.common.service.S3UploadService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -100,6 +96,7 @@ public class MemberService {
 	    String url = s3UploadService.uploadFile(file);
 	    mapper.updateProfileImg(memberId, url);
 	    return url;
+	}
 	    
 	// 회원 목록 조회용 총 데이터 개수
 	public int getAdminTotalMemberCount(Map<String, Object> paramMap) {
