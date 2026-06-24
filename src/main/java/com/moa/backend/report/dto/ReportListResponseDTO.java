@@ -1,19 +1,14 @@
-package com.moa.backend.report.model.vo;
+package com.moa.backend.report.dto;
 
 import java.time.LocalDateTime;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
-public class Report {
+public class ReportListResponseDTO {
 	private Long reportId;
 	private Long targetId;
 	
@@ -25,4 +20,8 @@ public class Report {
 	private String status;		//PENDING, DONE, REJECT / DEFAULT: PENDING)
 	private String reportResult;
 	private Long memberId;
+	
+	private String writerNickname; // JOIN으로 긁어올 작성자 닉네임
+	private String profileImg;
+
 }

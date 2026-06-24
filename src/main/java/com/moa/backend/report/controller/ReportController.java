@@ -2,14 +2,20 @@ package com.moa.backend.report.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moa.backend.common.config.jwt.CustomUserDetails;
+import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
+import com.moa.backend.report.dto.ReportListResponseDTO;
+import com.moa.backend.report.dto.ReportPageRequestDTO;
 import com.moa.backend.report.service.ReportService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +51,17 @@ public class ReportController {
         }
     }
 
-	
+	@PreAuthorize("hasRole('ADMIN')") 
+    @GetMapping("/list")
+    public ResponseEntity<?> getReportList(
+    		@ModelAttribute ReportPageRequestDTO reportPageRequest) {
+		try {
+			PageResponse<ReportListResponseDTO> response = reportService.selectReportList(reportPageRequest);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body("신고 목록을 불러오는 중 오류가 발생했습니다.");
+		}
+    }
 	
 }
