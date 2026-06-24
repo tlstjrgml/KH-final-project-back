@@ -45,4 +45,7 @@ public interface MemberMapper {
 	int updateMemberDetail(@Param("memberId") Long memberId, @Param("dto")MemberUpdateRequestDto dto);
 	
 	boolean updatePassword(@Param("memberId") Long memberId, @Param("encodedPassword")String encodedPassword);
+	
+	//s3파일 업로드
+	void updateProfileImg(@Param("memberId") Long memberId, @Param("profileImgUrl") String profileImgUrl);
 }
