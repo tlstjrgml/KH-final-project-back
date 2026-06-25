@@ -17,6 +17,12 @@ public class BoardPageRequest extends PageRequest {
     // 검색어
     private String keyword; 
     
+    // 내용
+    private String boardContent; 
+    
+    // 작성자 닉네임
+    private String nickname;
+    
     // 정렬 조건 ("latest", "oldest", "views")
     private String sort = "latest"; 
 }
