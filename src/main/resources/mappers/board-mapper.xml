@@ -119,22 +119,31 @@
 	</update>
 
 	<update id="updateBoard" parameterType="Board">
-    UPDATE BOARD
-    SET BOARD_TITLE = #{boardTitle},
-        BOARD_CONTENT = #{boardContent},
-        WELFARE_ID = #{welfareId},
-        MODIFY_DATE = SYSDATE
-    WHERE BOARD_ID = #{boardId}
-        AND BOARD_STATUS = 'Y'
-</update>
+	    UPDATE BOARD
+	    SET BOARD_TITLE = #{boardTitle},
+	        BOARD_CONTENT = #{boardContent},
+	        WELFARE_ID = #{welfareId},
+	        MODIFY_DATE = SYSDATE
+	    WHERE BOARD_ID = #{boardId}
+	        AND BOARD_STATUS = 'Y'
+	</update>
+	
+	<sql id="boardSearchCondition">
+        WHERE B.BOARD_STATUS = 'Y'
+
+        <if test="boardType != null and boardType != ''">
+            AND B.BOARD_TYPE = #{boardType}
+        </if>
+
+        <if test="keyword != null and keyword != ''">
+            AND B.BOARD_TITLE LIKE '%' || #{keyword} || '%'
+        </if>
+    </sql>
 	
 	<select id="selectBoardCount" resultType="int">
         SELECT COUNT(*)
-        FROM BOARD
-        WHERE BOARD_STATUS = 'Y'
-        <if test="boardType != null and boardType != ''">
-            AND BOARD_TYPE = #{boardType}
-        </if>
+        FROM BOARD B
+		<include refid="boardSearchCondition" />
     </select>
     
     <select id="selectBoardListWithPaging" 
@@ -155,17 +164,7 @@
             FROM LIKES
             GROUP BY BOARD_ID
         ) L ON (B.BOARD_ID = L.BOARD_ID)
-        WHERE B.BOARD_STATUS = 'Y'
-
-		<!-- 게시판 타입 필터링 -->
-        <if test="boardType != null and boardType != ''">
-            AND B.BOARD_TYPE = #{boardType}
-        </if>
-
-		<!-- 검색어 필터링 -->
-		<if test="keyword != null and keyword != ''">
-			AND B.BOARD_TITLE LIKE '%' || #{keyword} || '%'
-		</if>
+		<include refid="boardSearchCondition" />
 
 		<!-- 정렬 조건 분기 -->
 		<choose>
