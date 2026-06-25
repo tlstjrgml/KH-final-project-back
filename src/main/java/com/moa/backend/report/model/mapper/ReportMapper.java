@@ -19,4 +19,7 @@ public interface ReportMapper {
 	List<ReportListResponseDTO> selectReportList(ReportPageRequestDTO reportPageRequest);
 	
 	int updateReport(ReportUpdateRequestDTO dto);
+
+	Long selectReporterIdByReportId(Long reportId);
+	
 }

@@ -66,4 +66,8 @@
             REPORT_RESULT = #{reportResult}
         WHERE REPORT_ID = #{reportId}
     </update>
+    
+    <select id="selectReporterIdByReportId" resultType="long">
+    	SELECT MEMBER_ID FROM REPORT WHERE REPORT_ID = #{reportId}
+    </select>
 </mapper>
