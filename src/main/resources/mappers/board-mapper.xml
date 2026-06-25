@@ -138,11 +138,20 @@
         <if test="keyword != null and keyword != ''">
             AND B.BOARD_TITLE LIKE '%' || #{keyword} || '%'
         </if>
+        
+        <if test="boardContent != null and boardContent != ''">
+            AND B.BOARD_CONTENT LIKE '%' || #{boardContent} || '%'
+        </if>
+
+        <if test="nickname != null and nickname != ''">
+            AND M.NICKNAME LIKE '%' || #{nickname} || '%'
+        </if>
     </sql>
 	
 	<select id="selectBoardCount" resultType="int">
         SELECT COUNT(*)
         FROM BOARD B
+        JOIN MEMBER M ON (B.MEMBER_ID = M.MEMBER_ID)
 		<include refid="boardSearchCondition" />
     </select>
     
