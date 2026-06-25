@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.common.util.page.Pagination;
+import com.moa.backend.notification.SseEmitterRepository;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
@@ -20,7 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class ReportService {
 	
 	private final ReportMapper reportMapper;
-
+	private final SseEmitterRepository sseEmitterRepository;
+	
 	@Transactional(rollbackFor = Exception.class)
 	public void insertReport(ReportCreateRequestDTO request) {
 		String type = request.getTargetType();
@@ -45,6 +47,16 @@ public class ReportService {
 	@Transactional(rollbackFor = Exception.class)
     public boolean updateReport(ReportUpdateRequestDTO reportUpdateRequest) {
         int result = reportMapper.updateReport(reportUpdateRequest);
+        if(result > 0) {
+        	Long memberId = reportMapper.selectReporterIdByReportId(reportUpdateRequest.getReportId());
+        	if("DONE".equals(reportUpdateRequest.getStatus())){
+        		sseEmitterRepository.sendNotification(memberId, "신고가 처리되었습니다. 사유: " + reportUpdateRequest.getReportResult());
+        	}else if("REJECT".equals(reportUpdateRequest.getStatus())) {
+        		sseEmitterRepository.sendNotification(memberId, "신고가 반려되었습니다. 사유: " + reportUpdateRequest.getReportResult());
+        	}
+        }
+        
         return result > 0;
     }
+	
 }
