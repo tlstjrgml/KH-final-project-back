@@ -122,5 +122,9 @@ public class MemberService {
     public void restoreMember(Long memberId) {
         mapper.restoreMember(memberId);
     }
+
+	public Member findByEmail(String email) {
+		return mapper.findByEmail(email);
+	}
 }
 
