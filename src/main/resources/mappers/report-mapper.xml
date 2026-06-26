@@ -79,6 +79,54 @@
 		AND STATUS = 'PENDING'
 	</update>
     
+    <update id="updateReport" parameterType="ReportUpdateRequestDTO">
+        UPDATE REPORT
+        SET 
+            STATUS = #{status},
+            REPORT_RESULT = #{reportResult}
+        WHERE REPORT_ID = #{reportId}
+    </update>
+    
+    <select id="selectReportDetailBase" 
+            parameterType="long" 
+            resultType="com.moa.backend.report.dto.ReportDetailResponseDTO">
+        SELECT 
+            R.REPORT_ID,
+            R.TARGET_ID,
+            R.TARGET_TYPE,
+            R.REPORT_DATE,
+            R.REASON,
+            R.STATUS,
+            R.REPORT_RESULT,
+            R.MEMBER_ID,
+            M.NICKNAME AS writerNickname,  
+            D.PROFILE_IMG                 
+        FROM REPORT R
+        JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
+        LEFT JOIN MEMBER_DETAIL D ON (M.MEMBER_ID = D.MEMBER_ID) WHERE R.REPORT_ID = #{reportId}
+    </select>
+    
+    <select id="selectReportedReply" resultType="com.moa.backend.report.dto.ReportedReplyInfo">
+        SELECT 
+            R.REPLY_ID,
+            R.MEMBER_ID,
+            R.REPLY_CONTENT,
+            R.CREATE_DATE,
+            R.REPLY_STATUS,
+            R.REF_ID,
+            R.CODE,
+            M.NICKNAME AS replyWriterNickname,
+            D.PROFILE_IMG AS replyWriterProfileImg
+        FROM REPLY R
+        JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
+        LEFT JOIN MEMBER_DETAIL D ON (M.MEMBER_ID = D.MEMBER_ID)
+        WHERE R.REPLY_ID = #{targetId}
+    </select>
+    
+    
+</mapper>
+
+
     <select id="selectReporterIdByReportId" resultType="long">
     	SELECT MEMBER_ID FROM REPORT WHERE REPORT_ID = #{reportId}
     </select>

@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
+import com.moa.backend.report.dto.ReportDetailResponseDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
 import com.moa.backend.report.dto.ReportUpdateRequestDTO;
@@ -80,6 +82,20 @@ public class ReportController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("신고 처리 중 서버 오류가 발생했습니다.");
+        }
+    }
+	
+	@PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{reportId}")
+    public ResponseEntity<?> getReportDetail(@PathVariable("reportId") Long reportId) {
+        try {
+            ReportDetailResponseDTO<?> response = reportService.getReportDetail(reportId);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("신고 상세 내용을 불러오는 중 오류가 발생했습니다.");
         }
     }
 	
