@@ -70,22 +70,12 @@
 	<update id="updateReport" parameterType="ReportUpdateRequestDTO">
 		UPDATE REPORT
 		SET
-		STATUS = #{status},
-		REPORT_RESULT = #{reportResult}
-		WHERE TARGET_ID = (SELECT TARGET_ID FROM REPORT WHERE REPORT_ID =
-		#{reportId})
-		AND TARGET_TYPE = (SELECT TARGET_TYPE FROM REPORT WHERE REPORT_ID =
-		#{reportId})
-		AND STATUS = 'PENDING'
+			STATUS = #{status},
+			REPORT_RESULT = #{reportResult}
+		WHERE TARGET_ID = (SELECT TARGET_ID FROM REPORT WHERE REPORT_ID = #{reportId})
+			AND TARGET_TYPE = (SELECT TARGET_TYPE FROM REPORT WHERE REPORT_ID =	#{reportId})
+			AND STATUS = 'PENDING'
 	</update>
-    
-    <update id="updateReport" parameterType="ReportUpdateRequestDTO">
-        UPDATE REPORT
-        SET 
-            STATUS = #{status},
-            REPORT_RESULT = #{reportResult}
-        WHERE REPORT_ID = #{reportId}
-    </update>
     
     <select id="selectReportDetailBase" 
             parameterType="long" 
@@ -123,8 +113,6 @@
         WHERE R.REPLY_ID = #{targetId}
     </select>
     
-    
-</mapper>
 
 
     <select id="selectReporterIdByReportId" resultType="long">
