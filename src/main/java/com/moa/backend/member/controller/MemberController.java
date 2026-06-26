@@ -219,6 +219,11 @@ public class MemberController {
 		if (member == null) {
 		    return ResponseEntity.badRequest().body("존재하지 않는 이메일입니다.");
 		}
+		
+		if ("BANNED".equals(member.getMemberStatus())) {
+			return ResponseEntity.status(403).body("강제 탈퇴된 회원입니다.");
+		}
+		
 		if(bcrypt.matches(request.get("password"), member.getPassword())) {
 			
 			String token = jwtProvider.generateToken(member.getMemberId(), member.getIsAdmin(), member.getNickname());
@@ -236,7 +241,7 @@ public class MemberController {
 	    return ResponseEntity.ok(dto);
 	}
 	
-// 1. 총 가입자 수 API
+	// 1. 총 가입자 수 API
 	@GetMapping("/admin/dashboard/total-members")
 	public ResponseEntity<Integer> getTotalMemberCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		// getIsAdmin() 방식 적용
@@ -256,7 +261,7 @@ public class MemberController {
 		return ResponseEntity.ok(mService.getSignupTrend());
 	}
 
-	// 3. 인기 복지 TOP 10 API
+	// 3. 인기 복지 카테고리 API
 	@GetMapping("/admin/dashboard/top-welfare")
 	public ResponseEntity<List<Map<String, Object>>> getTopWelfare(
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
