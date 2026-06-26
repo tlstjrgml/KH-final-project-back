@@ -66,13 +66,15 @@ public class ReportService {
     public boolean updateReport(ReportUpdateRequestDTO reportUpdateRequest) {
         int result = reportMapper.updateReport(reportUpdateRequest);
         if(result > 0) {
-        	Long memberId = reportMapper.selectReporterIdByReportId(reportUpdateRequest.getReportId());
-        	if("DONE".equals(reportUpdateRequest.getStatus())){
-        		sseEmitterRepository.sendNotification(memberId, "신고가 처리되었습니다. 사유: " + reportUpdateRequest.getReportResult());
-        	}else if("REJECT".equals(reportUpdateRequest.getStatus())) {
-        		sseEmitterRepository.sendNotification(memberId, "신고가 반려되었습니다. 사유: " + reportUpdateRequest.getReportResult());
-        	}
+            Long memberId = reportMapper.selectReporterIdByReportId(reportUpdateRequest.getReportId());
+            System.out.println("신고자 memberId: " + memberId); // 추가
+            if("DONE".equals(reportUpdateRequest.getStatus())){
+                sseEmitterRepository.sendNotification(memberId, "신고가 처리되었습니다. 사유: " + reportUpdateRequest.getReportResult());
+            }else if("REJECT".equals(reportUpdateRequest.getStatus())) {
+                sseEmitterRepository.sendNotification(memberId, "신고가 반려되었습니다. 사유: " + reportUpdateRequest.getReportResult());
+            }
         }
+        
         
         return result > 0;
     }
