@@ -124,6 +124,16 @@ public class MemberController {
 		}
 	}
 	
+	//아이디 중복 확인
+	@GetMapping("/check-email")
+	public ResponseEntity<?> checkEmailDuplicate(@RequestParam("email") String email){
+		Member member = mService.findByEmail(email);
+		if(member != null) {
+			return ResponseEntity.badRequest().body("이미 사용중인 아이디(이메일)입니다.");
+			
+		}
+		return ResponseEntity.ok("사용가능한 아이디(이메일)입니다.");
+	}
 	
 
 	// 인증 이메일 요청
