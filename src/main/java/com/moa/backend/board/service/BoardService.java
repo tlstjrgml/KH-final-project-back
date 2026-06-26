@@ -1,5 +1,6 @@
 package com.moa.backend.board.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.moa.backend.board.model.mapper.BoardMapper;
 import com.moa.backend.board.model.vo.Attachment;
 import com.moa.backend.board.model.vo.Board;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
+import com.moa.backend.common.service.S3UploadService;
 import com.moa.backend.common.util.FileUtil;
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.common.util.page.Pagination;
@@ -29,6 +31,8 @@ public class BoardService {
 	private final BoardMapper boardMapper;
 	private final LikesMapper likesMapper;
 	private final FileUtil fileUtil;
+	private final S3UploadService s3UploadService;
+
 
 //	public Board insertBoard(Board board) {
 //		boardMapper.insertBoard(board);
@@ -36,7 +40,7 @@ public class BoardService {
 //	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Board insertBoard(BoardCreateRequest request) {
+	public Board insertBoard(BoardCreateRequest request) throws IOException {
 		Board board = new Board();
         board.setBoardTitle(request.getBoardTitle());
         board.setBoardContent(request.getBoardContent());
@@ -48,6 +52,7 @@ public class BoardService {
 		Long generatedBoardId = board.getBoardId(); // db의 boardId
 
 		// DTO에서 파일 리스트를 꺼내 유효성 검사 후 업로드 가동
+		/*
 		List<MultipartFile> files = request.getFiles();
 		if (files != null && !files.isEmpty()) {
 			for (MultipartFile file : files) {
@@ -60,6 +65,18 @@ public class BoardService {
 					attm.setBoardId(generatedBoardId);
 					boardMapper.insertAttachment(attm);
 				}
+			}
+		}
+		*/
+		List<MultipartFile> files = request.getFiles();
+		if (files != null && !files.isEmpty()) {
+			for (MultipartFile file : files) {
+				String url = s3UploadService.uploadFile(file);
+				Attachment attm = new Attachment();
+				attm.setOriginalName(file.getOriginalFilename());
+				attm.setAttmPath(url);
+				attm.setBoardId(generatedBoardId);
+				boardMapper.insertAttachment(attm);
 			}
 		}
 
@@ -147,7 +164,7 @@ public class BoardService {
 //		}
 //	}
 
-	public void updateBoard(Long boardId, BoardUpdateRequestDTO updateData, CustomUserDetails userDetails) {
+	public void updateBoard(Long boardId, BoardUpdateRequestDTO updateData, CustomUserDetails userDetails) throws IOException {
 		// boardId를 통해 db에서 글 정보 가져옴 
 		BoardDetailResponseDTO originalBoard = boardMapper.selectBoardDetail(boardId);
 		if (originalBoard == null) {
@@ -189,11 +206,19 @@ public class BoardService {
 		if (newFiles != null && !newFiles.isEmpty()) {
 			for (MultipartFile file : newFiles) {
 				if (!file.isEmpty()) {
+					/*
 					Attachment attm = fileUtil.saveFile(file);
 					if (attm == null) {
 						throw new RuntimeException("파일 수정 중 업로드 오류가 발생했습니다.");
-					}
+					} 
 					// 현재 수정한 글 번호를 부모 ID로 박아서 새롭게 인서트
+					attm.setBoardId(boardId);
+					boardMapper.insertAttachment(attm);
+					*/
+					String url = s3UploadService.uploadFile(file);
+					Attachment attm = new Attachment();
+					attm.setOriginalName(file.getOriginalFilename());
+					attm.setAttmPath(url);
 					attm.setBoardId(boardId);
 					boardMapper.insertAttachment(attm);
 				}
