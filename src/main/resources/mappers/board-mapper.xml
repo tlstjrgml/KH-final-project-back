@@ -205,14 +205,14 @@
     </update>
 
 	<update id="updateBoardContent">
-		UPDATE BOARD
-		SET
-			BOARD_TITLE = #{arg1.boardTitle},
-		 	BOARD_CONTENT = #{arg1.boardContent},
-			WELFARE_ID = #{arg1.welfareId},
-			MODIFY_DATE = SYSDATE
-		WHERE 
-			BOARD_ID = #{arg0} 
+	    UPDATE BOARD
+	    SET
+	        BOARD_TITLE = #{updateData.boardTitle},
+	        BOARD_CONTENT = #{updateData.boardContent},
+	        WELFARE_ID = #{updateData.welfareId},
+	        MODIFY_DATE = SYSDATE
+	    WHERE 
+	        BOARD_ID = #{boardId} 
 	</update>
     <select id="getTop5" resultType="BoardListResponseDTO">
 	    SELECT 

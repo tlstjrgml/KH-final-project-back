@@ -26,7 +26,7 @@ public class FileUtil {
 			if (!folder.exists()) // 폴더 없으면 만든다.
 				folder.mkdirs();
 
-			// 원본 파일 이름(확장자 포함)
+			// 원본 	파일 이름(확장자 포함)
 			String originFileName = upload.getOriginalFilename();
 			// 확장자
 			String ext = originFileName.substring(originFileName.lastIndexOf("."));
