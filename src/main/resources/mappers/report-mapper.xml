@@ -44,28 +44,53 @@
         FROM REPORT R
         <include refid="reportSearchCondition" />
     </select>
-    
-    <select id="selectReportList" parameterType="ReportPageRequestDTO" resultType="ReportListResponseDTO">
-		SELECT 
-            R.REPORT_ID,
-            R.TARGET_ID,
-            R.TARGET_TYPE,
-            R.REPORT_DATE,
-            R.REASON,
-            R.STATUS,
-            R.REPORT_RESULT,
-            R.MEMBER_ID,
-            M.NICKNAME AS writerNickname,  
-            D.PROFILE_IMG 
-        FROM REPORT R
-        JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
-        LEFT JOIN MEMBER_DETAIL D ON (M.MEMBER_ID = D.MEMBER_ID)
-        <include refid="reportSearchCondition" />
-        ORDER BY R.REPORT_ID DESC
 
-        OFFSET #{offset} ROWS
-        FETCH NEXT #{limit} ROWS ONLY
-    </select>
+	<select id="selectReportList" parameterType="ReportPageRequestDTO" resultType="ReportListResponseDTO">
+	    SELECT 
+	        R.REPORT_ID AS reportId,
+	        R.TARGET_TYPE AS targetType,
+	        M.NICKNAME AS writerNickname,  
+	        D.PROFILE_IMG AS profileImg,
+	        R.STATUS AS status,
+
+	        R.REASON AS reason, 
+	        
+	        CASE 
+	            WHEN R.TARGET_TYPE IN ('FRE', 'REV') THEN R.TARGET_ID
+	            WHEN R.TARGET_TYPE = 'REP' THEN C.REF_ID 
+	            ELSE R.TARGET_ID 
+	        END AS targetId,
+	        
+	        CASE 
+	            WHEN R.TARGET_TYPE IN ('FRE', 'REV') THEN B.BOARD_TYPE 
+	            WHEN R.TARGET_TYPE = 'REP' THEN B2.BOARD_TYPE 
+	            ELSE 'ETC' 
+	        END AS targetCategory,
+	        
+	        CASE 
+	            WHEN R.TARGET_TYPE IN ('FRE', 'REV') THEN TO_CHAR(B.BOARD_TITLE)
+	            WHEN R.TARGET_TYPE = 'REP' THEN TO_CHAR(C.REPLY_CONTENT)
+	            ELSE '삭제된 데이터' 
+	        END AS targetContent,
+	        
+	        CASE 
+	            WHEN R.TARGET_TYPE IN ('FRE', 'REV') THEN B.BOARD_STATUS
+	            WHEN R.TARGET_TYPE = 'REP' THEN C.REPLY_STATUS
+	            ELSE 'N' 
+	        END AS targetStatus
+	        
+	    FROM REPORT R
+	    JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
+	    LEFT JOIN MEMBER_DETAIL D ON (M.MEMBER_ID = D.MEMBER_ID)
+	    LEFT JOIN BOARD B ON R.TARGET_ID = B.BOARD_ID AND R.TARGET_TYPE IN ('FRE', 'REV')
+	    LEFT JOIN REPLY C ON R.TARGET_ID = C.REPLY_ID AND R.TARGET_TYPE = 'REP'
+	    LEFT JOIN BOARD B2 ON C.REF_ID = B2.BOARD_ID
+	    
+	    <include refid="reportSearchCondition" />
+	    ORDER BY R.REPORT_ID DESC
+	    OFFSET #{offset} ROWS
+	    FETCH NEXT #{limit} ROWS ONLY
+	</select>
 
 	<update id="updateReport" parameterType="ReportUpdateRequestDTO">
 		UPDATE REPORT

@@ -23,5 +23,9 @@ public class ReportListResponseDTO {
 	
 	private String writerNickname; // JOIN으로 긁어올 작성자 닉네임
 	private String profileImg;
-
+	
+	// 조인(JOIN)을 통해 가져올 게시판 카테고리와 실제 내용
+	private String targetCategory; // 예: "FRE", "REV" (댓글일 경우 부모 게시판의 카테고리)
+	private String targetContent; // 예: 게시글 제목 또는 댓글 본문 내용
+	private String targetStatus;
 }
