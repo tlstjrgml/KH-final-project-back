@@ -16,6 +16,9 @@ import com.moa.backend.report.dto.ReportedReplyInfo;
 public interface ReportMapper {
 
 	int insertReport(ReportCreateRequestDTO dto);
+	
+	// 추가
+	int checkDuplicateReport(ReportCreateRequestDTO dto);
 
 	int selectReportCount(ReportPageRequestDTO reportPageRequest);
 
@@ -26,4 +29,6 @@ public interface ReportMapper {
 	ReportDetailResponseDTO<Object> selectReportDetailBase(Long reportId);
 
 	ReportedReplyInfo selectReportedReply(Long targetId);
+	Long selectReporterIdByReportId(Long reportId);
+	
 }

@@ -17,6 +17,14 @@
 		)
 	</insert>
 	
+	<select id="checkDuplicateReport" parameterType="ReportCreateRequestDTO" resultType="int">
+		SELECT COUNT(*) 
+		FROM REPORT 
+		WHERE MEMBER_ID = #{memberId} 
+		  AND TARGET_ID = #{targetId} 
+		  AND TARGET_TYPE = #{targetType}
+	</select>
+	
 	<sql id="reportSearchCondition">
         <where>
             <if test="targetId != null">
@@ -58,6 +66,18 @@
         OFFSET #{offset} ROWS
         FETCH NEXT #{limit} ROWS ONLY
     </select>
+
+	<update id="updateReport" parameterType="ReportUpdateRequestDTO">
+		UPDATE REPORT
+		SET
+		STATUS = #{status},
+		REPORT_RESULT = #{reportResult}
+		WHERE TARGET_ID = (SELECT TARGET_ID FROM REPORT WHERE REPORT_ID =
+		#{reportId})
+		AND TARGET_TYPE = (SELECT TARGET_TYPE FROM REPORT WHERE REPORT_ID =
+		#{reportId})
+		AND STATUS = 'PENDING'
+	</update>
     
     <update id="updateReport" parameterType="ReportUpdateRequestDTO">
         UPDATE REPORT
@@ -107,3 +127,7 @@
 </mapper>
 
 
+    <select id="selectReporterIdByReportId" resultType="long">
+    	SELECT MEMBER_ID FROM REPORT WHERE REPORT_ID = #{reportId}
+    </select>
+</mapper>

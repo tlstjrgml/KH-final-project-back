@@ -11,6 +11,7 @@ import com.moa.backend.board.model.vo.Attachment;
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.common.util.page.Pagination;
 import com.moa.backend.reply.model.mapper.ReplyMapper;
+import com.moa.backend.notification.SseEmitterRepository;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportDetailResponseDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
@@ -30,11 +31,21 @@ public class ReportService {
 	private final BoardMapper boardMapper;
 	private final ReplyMapper replyMapper;
 
+	private final SseEmitterRepository sseEmitterRepository;
+	
 	@Transactional(rollbackFor = Exception.class)
 	public void insertReport(ReportCreateRequestDTO request) {
 		String type = request.getTargetType();
 		if (!"FRE".equals(type) && !"REV".equals(type) && !"REP".equals(type)) {
 			throw new IllegalArgumentException("잘못된 대상 타입입니다. (FRE, REV, REP만 가능)");
+		}
+		
+		// 중복 신고 검증 로직 추가
+		// DB에 동일한 memberId와 targetId로 신고한 내역이 있는지 카운트를 가져옵니다.
+		int duplicateCount = reportMapper.checkDuplicateReport(request);
+		if (duplicateCount > 0) {
+			// 프론트엔드의 catch 블록으로 에러 메시지를 던집니다.
+			throw new IllegalArgumentException("이미 신고한 게시물입니다.");
 		}
 		
 		reportMapper.insertReport(request);
@@ -54,6 +65,15 @@ public class ReportService {
 	@Transactional(rollbackFor = Exception.class)
     public boolean updateReport(ReportUpdateRequestDTO reportUpdateRequest) {
         int result = reportMapper.updateReport(reportUpdateRequest);
+        if(result > 0) {
+        	Long memberId = reportMapper.selectReporterIdByReportId(reportUpdateRequest.getReportId());
+        	if("DONE".equals(reportUpdateRequest.getStatus())){
+        		sseEmitterRepository.sendNotification(memberId, "신고가 처리되었습니다. 사유: " + reportUpdateRequest.getReportResult());
+        	}else if("REJECT".equals(reportUpdateRequest.getStatus())) {
+        		sseEmitterRepository.sendNotification(memberId, "신고가 반려되었습니다. 사유: " + reportUpdateRequest.getReportResult());
+        	}
+        }
+        
         return result > 0;
     }
 
@@ -82,3 +102,4 @@ public class ReportService {
         return detail;
 	}
 }
+	

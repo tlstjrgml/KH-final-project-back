@@ -174,31 +174,42 @@
 	</select>
 
 	<select id="getAdminMemberList" parameterType="map" resultType="com.moa.backend.member.model.vo.Member">
-	    SELECT 
-	        MEMBER_ID AS memberId,
-	        EMAIL AS email,
-	        NICKNAME AS nickname,
-	        SIGNUP_DATE AS signupDate
-	    FROM MEMBER
-	    WHERE MEMBER_STATUS = #{status}
-	    
-	    <if test="keyword != null and keyword != ''">
-	        AND (EMAIL LIKE '%' || #{keyword} || '%' OR NICKNAME LIKE '%' || #{keyword} || '%')
-	    </if>
-	    
-	    <choose>
-	        <when test="sort == 'oldest'">
-	            ORDER BY SIGNUP_DATE ASC
-	        </when>
-	        <when test="sort == 'name'">
-	            ORDER BY NICKNAME ASC
-	        </when>
-	        <otherwise>
-	            ORDER BY SIGNUP_DATE DESC
-	        </otherwise>
-	    </choose>
-	    
-	    OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+		SELECT
+		M.MEMBER_ID AS memberId,
+		M.EMAIL AS email,
+		M.NICKNAME AS nickname,
+		M.SIGNUP_DATE AS signupDate,
+		/* 💡 추가된 누적 신고 횟수 계산 서브쿼리 */
+		(
+		SELECT COUNT(R.REPORT_ID)
+		FROM REPORT R
+		LEFT JOIN BOARD B ON (R.TARGET_TYPE IN ('FRE', 'REV') AND R.TARGET_ID =
+		B.BOARD_ID)
+		LEFT JOIN REPLY P ON (R.TARGET_TYPE = 'REP' AND R.TARGET_ID = P.REPLY_ID)
+		WHERE R.STATUS = 'DONE'
+		AND (B.MEMBER_ID = M.MEMBER_ID OR P.MEMBER_ID = M.MEMBER_ID)
+		) AS reportCount
+		FROM MEMBER M
+		WHERE M.MEMBER_STATUS = #{status}
+	
+		<if test="keyword != null and keyword != ''">
+			AND (M.EMAIL LIKE '%' || #{keyword} || '%' OR M.NICKNAME LIKE '%' ||
+			#{keyword} || '%')
+		</if>
+	
+		<choose>
+			<when test="sort == 'oldest'">
+				ORDER BY M.SIGNUP_DATE ASC
+			</when>
+			<when test="sort == 'name'">
+				ORDER BY M.NICKNAME ASC
+			</when>
+			<otherwise>
+				ORDER BY M.SIGNUP_DATE DESC
+			</otherwise>
+		</choose>
+	
+		OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
 	</select>
 
 	<update id="withdrawMember" parameterType="long">
