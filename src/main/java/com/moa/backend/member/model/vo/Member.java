@@ -24,4 +24,6 @@ public class Member {
     private LocalDateTime deletedDate;
     private LocalDateTime signupDate;
     private String nickname;
+    
+    private int reportCount;
 }
