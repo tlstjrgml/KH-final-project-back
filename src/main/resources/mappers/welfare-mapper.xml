@@ -198,10 +198,8 @@
             )
         </if>
         <if test="ageMin > 0 and ageMax > 0">
-		    AND (
-		        (SPRT_TRGT_MIN_AGE = 0 AND SPRT_TRGT_MAX_AGE = 0)
-		        OR (SPRT_TRGT_MIN_AGE &lt;= #{ageMax} AND SPRT_TRGT_MAX_AGE &gt;= #{ageMin})
-		    )
+		    AND SPRT_TRGT_MIN_AGE &lt;= #{ageMax}
+		    AND SPRT_TRGT_MAX_AGE &gt;= #{ageMin}
 		</if>
         <if test="income != null and income.size() > 0">
             AND (
@@ -273,6 +271,34 @@
 	<select id="countWish" parameterType="Long" resultType="int">
 	    SELECT COUNT(*) FROM WISH WHERE MEMBER_ID = #{memberId}
 	</select>
+	
+	<!-- 지역 목록 조회 -->
+    <select id="getRegionList" resultType="com.moa.backend.welfare.model.vo.WelfareRegionDTO">
+        SELECT DISTINCT 
+            SUBSTR(ZIP_CD, 1, 2) AS zipCd,
+            REGEXP_SUBSTR(REGION_NAME, '^\S+') AS regionName
+        FROM WELFARE_REGION
+        ORDER BY zipCd
+    </select>
+
+    <!-- 카테고리 코드 목록 조회 -->
+    <select id="getCategoryList" resultType="com.moa.backend.welfare.model.vo.WelfareCategoryDTO">
+        SELECT 
+            m.MAIN_ID AS mainId,
+            s.SUB_ID AS subId,
+            s.SUB_NAME AS subName
+        FROM MAIN_CATEGORY m
+        JOIN SUB_CATEGORY s ON m.MAIN_ID = s.MAIN_ID
+        ORDER BY m.MAIN_ID, s.SUB_ID
+    </select>
+
+    <!-- 지역명(한글) -> 지역코드(2자리) 변환 -->
+    <select id="getRegionCode" parameterType="String" resultType="String">
+        SELECT DISTINCT SUBSTR(ZIP_CD, 1, 2)
+        FROM WELFARE_REGION
+        WHERE REGEXP_SUBSTR(REGION_NAME, '^\S+') LIKE #{regionName} || '%'
+        FETCH FIRST 1 ROWS ONLY
+    </select>
 		
 
 </mapper>

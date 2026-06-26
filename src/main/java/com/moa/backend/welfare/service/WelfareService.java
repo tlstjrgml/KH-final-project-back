@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.common.util.page.Pagination;
 import com.moa.backend.welfare.model.mapper.WelfareMapper;
+import com.moa.backend.welfare.model.vo.WelfareCategoryDTO;
 import com.moa.backend.welfare.model.vo.WelfareDetailDTO;
 import com.moa.backend.welfare.model.vo.WelfareListDTO;
+import com.moa.backend.welfare.model.vo.WelfareRegionDTO;
 import com.moa.backend.welfare.model.vo.WelfareSearchDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -21,14 +23,6 @@ public class WelfareService {
 
     private final WelfareMapper mapper;
     
-    private static final Map<String, String> REGION_CODE_MAP = Map.ofEntries(
-    	    Map.entry("서울", "11"), Map.entry("부산", "26"), Map.entry("대구", "27"), Map.entry("인천", "28"),
-    	    Map.entry("광주", "29"), Map.entry("대전", "30"), Map.entry("울산", "31"), Map.entry("세종", "36"),
-    	    Map.entry("경기", "41"), Map.entry("강원", "42"), Map.entry("충북", "43"), Map.entry("충남", "44"),
-    	    Map.entry("전북", "45"), Map.entry("전남", "46"), Map.entry("경북", "47"), Map.entry("경남", "48"),
-    	    Map.entry("제주", "50")
-    	);
-
     public List<WelfareListDTO> getMainWelfare() {
         return mapper.getMainWelfare();
     }
@@ -73,7 +67,7 @@ public class WelfareService {
         params.put("memberId", memberId);
         params.put("hasWish", hasWish);
         
-        params.put("region", region != null ? REGION_CODE_MAP.get(region) : null);
+        params.put("region", region != null ? mapper.getRegionCode(region) : null);
 
         if ("대학생".equals(jobStatus)) {
             params.put("schoolCd", "0049005");
@@ -89,8 +83,16 @@ public class WelfareService {
                 case 2 -> "0043003";
                 default -> null;
             };
-        params.put("earnCndSeCd", earnCd);
+        params.put("earnCndSeCd", earnCd);	
         
         return mapper.getRecommend(params);
     }
+
+	public List<WelfareRegionDTO> getRegionList() {
+		return mapper.getRegionList();
+	}
+
+	public List<WelfareCategoryDTO> getCategoryList() {
+		return mapper.getCategoryList();
+	}
 }

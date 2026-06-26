@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moa.backend.common.config.jwt.CustomUserDetails;
+import com.moa.backend.welfare.model.vo.WelfareCategoryDTO;
 import com.moa.backend.welfare.model.vo.WelfareDetailDTO;
 import com.moa.backend.welfare.model.vo.WelfareListDTO;
+import com.moa.backend.welfare.model.vo.WelfareRegionDTO;
 import com.moa.backend.welfare.service.WelfareService;
 
 import lombok.RequiredArgsConstructor;
@@ -77,5 +79,15 @@ public class WelfareController {
             memberId = ((CustomUserDetails) auth.getPrincipal()).getMemberId();
         }
         return ResponseEntity.ok(welfareService.getRecommend(memberId, region, jobStatus, incomeLevel));
+    }
+    
+    @GetMapping("/regions")
+    public List<WelfareRegionDTO> getRegionList(){
+    	return welfareService.getRegionList();
+    }
+    
+    @GetMapping("/categories")
+    public List<WelfareCategoryDTO> getCategoryList(){
+    	return welfareService.getCategoryList();
     }
 }
