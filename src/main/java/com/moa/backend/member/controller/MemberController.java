@@ -291,9 +291,9 @@ public class MemberController {
 	@PatchMapping("/me/password")
 	public ResponseEntity<?> updatePassword(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberPasswordUpdateRequestDto dto){
 		long memberId = userDetails.getMemberId();
-		boolean result = mService.updatePassword(memberId, dto);
-		if(!result) {
-			return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다");
+		String result = mService.updatePassword(memberId, dto);
+		if(result != null) {
+			return ResponseEntity.badRequest().body(result);
 		}
 		return ResponseEntity.ok("비밀번호 변경 완료");
 	}

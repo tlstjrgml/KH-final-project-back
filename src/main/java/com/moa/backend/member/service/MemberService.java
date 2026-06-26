@@ -81,13 +81,16 @@ public class MemberService {
 		mapper.updateMemberDetail(memberId, dto);
 	}
 	
-	public boolean updatePassword(Long memberId, MemberPasswordUpdateRequestDto dto) {
-		if(!dto.getNewPassword().equals(dto.getConfirmPassword())){
-			return false;
+	public String updatePassword(Long memberId, MemberPasswordUpdateRequestDto dto) {
+		if(!dto.getNewPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{9,}$")) {
+			return "비밀번호 형식에 맞지 않습니다";
 		}
-		String encodedPassword = bcrypt.encode(dto.getNewPassword());
-		mapper.updatePassword(memberId, encodedPassword);
-		return true;
+		if(!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+			return "비밀번호가 일치하지 않습니다";
+		}
+		String endcodedPassword = bcrypt.encode(dto.getNewPassword());
+		mapper.updatePassword(memberId, endcodedPassword);
+		return null;
 		
 	}
 	
