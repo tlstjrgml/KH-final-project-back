@@ -210,7 +210,7 @@ public class BoardService {
 					Attachment attm = fileUtil.saveFile(file);
 					if (attm == null) {
 						throw new RuntimeException("파일 수정 중 업로드 오류가 발생했습니다.");
-					}
+					} 
 					// 현재 수정한 글 번호를 부모 ID로 박아서 새롭게 인서트
 					attm.setBoardId(boardId);
 					boardMapper.insertAttachment(attm);
