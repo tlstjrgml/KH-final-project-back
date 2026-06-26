@@ -1,6 +1,7 @@
 package com.moa.backend.welfare.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -89,5 +90,20 @@ public class WelfareController {
     @GetMapping("/categories")
     public List<WelfareCategoryDTO> getCategoryList(){
     	return welfareService.getCategoryList();
+    }
+    
+    @GetMapping("/persona")
+    public ResponseEntity<Map<String, List<WelfareListDTO>>> getPersona(
+            @RequestParam(name = "jobStatus", required = false) String jobStatus,
+            @RequestParam(name = "myJobStatus", required = false) String myJobStatus,
+            @RequestParam(name = "region", required = false) String region) {
+
+        if (myJobStatus != null && !myJobStatus.isEmpty()) {
+            return ResponseEntity.ok(welfareService.getPersonaByDetail(myJobStatus, region));
+        } else if (jobStatus != null && !jobStatus.isEmpty()) {
+            return ResponseEntity.ok(welfareService.getPersonaByCode(jobStatus));
+        } else {
+            return ResponseEntity.ok(Map.of());
+        }
     }
 }

@@ -41,4 +41,8 @@ public interface WelfareMapper {
 	
 	String getRegionCode(@Param("regionName") String regionName);
 
+	List<WelfareListDTO> getPersonaByDetail(Map<String, Object> params);
+
+	List<WelfareListDTO> getPersonaByCode(Map<String, Object> params);
+
 }
