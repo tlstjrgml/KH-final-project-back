@@ -1,5 +1,7 @@
 package com.moa.backend.report.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,10 +20,10 @@ import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportDetailResponseDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
+import com.moa.backend.report.dto.ReportMyResponseDto;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
 import com.moa.backend.report.dto.ReportUpdateRequestDTO;
 import com.moa.backend.report.service.ReportService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -98,5 +100,16 @@ public class ReportController {
             return ResponseEntity.internalServerError().body("신고 상세 내용을 불러오는 중 오류가 발생했습니다.");
         }
     }
+	
+	@GetMapping("/my")
+	public ResponseEntity<?> getMyReportList(@AuthenticationPrincipal CustomUserDetails userDetails){
+		
+		if(userDetails == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+		}
+		long memberId = userDetails.getMemberId();
+		List<ReportMyResponseDto> result = reportService.selectMyReportResponse(memberId);
+		return ResponseEntity.ok(result);
+	}
 	
 }
