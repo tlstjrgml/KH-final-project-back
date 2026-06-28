@@ -11,7 +11,7 @@ import com.moa.backend.report.dto.ReportPageRequestDTO;
 import com.moa.backend.report.dto.ReportUpdateRequestDTO;
 import com.moa.backend.report.dto.ReportedBoardInfo;
 import com.moa.backend.report.dto.ReportedReplyInfo;
-
+import com.moa.backend.report.dto.ReportMyResponseDto;
 @Mapper
 public interface ReportMapper {
 
@@ -30,5 +30,7 @@ public interface ReportMapper {
 
 	ReportedReplyInfo selectReportedReply(Long targetId);
 	Long selectReporterIdByReportId(Long reportId);
+	
+	List<ReportMyResponseDto> selectMyReportResponse(Long memberId);
 	
 }

@@ -143,4 +143,11 @@
     <select id="selectReporterIdByReportId" resultType="long">
     	SELECT MEMBER_ID FROM REPORT WHERE REPORT_ID = #{reportId}
     </select>
+    
+    <select id="selectMyReportResponse" resultType="com.moa.backend.report.dto.ReportMyResponseDto">
+    	SELECT REPORT_ID, TARGET_TYPE, REPORT_DATE, STATUS, REPORT_RESULT
+    	FROM REPORT
+    	WHERE MEMBER_ID = #{memberId}
+    	ORDER BY REPORT_DATE DESC
+    </select>
 </mapper>

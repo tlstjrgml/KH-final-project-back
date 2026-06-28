@@ -15,6 +15,7 @@ import com.moa.backend.notification.SseEmitterRepository;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportDetailResponseDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
+import com.moa.backend.report.dto.ReportMyResponseDto;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
 import com.moa.backend.report.dto.ReportUpdateRequestDTO;
 import com.moa.backend.report.dto.ReportedBoardInfo;
@@ -102,6 +103,10 @@ public class ReportService {
         }
         
         return detail;
+	}
+	
+	public List<ReportMyResponseDto> selectMyReportResponse(Long memberId){
+		return reportMapper.selectMyReportResponse(memberId);
 	}
 }
 	
