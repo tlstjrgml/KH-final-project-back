@@ -60,4 +60,6 @@ public interface MemberMapper {
 	String getProfileUrl(@Param("memberId")Long memberId);
 	
 	int deleteProfile(@Param("memberId")Long memberId);
+
+	void kickMember(Long memberId);
 }

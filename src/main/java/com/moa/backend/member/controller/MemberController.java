@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
 import com.moa.backend.member.model.dto.ReplyResponseDto;
+import com.moa.backend.member.model.mapper.MemberMapper;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
 import com.moa.backend.member.service.MemberService;
@@ -52,23 +54,25 @@ public class MemberController {
 		try {
 			// 1. 가짜 데이터(더미) 담은 VO 객체 생성
 			Member testMember = new Member();
-			testMember.setEmail("asdasd6831@gmail.com"); // 유니크 값 테스트시 변경할 것
+			testMember.setEmail("song@gui.com"); // 유니크 값 테스트시 변경할 것
 
 			// 스프링 시큐리티 비번 암호화 적용해서
 			String encPwd = bcrypt.encode("song");
 			testMember.setPassword(encPwd);
 
 			testMember.setLoginType("LOCAL");
-			testMember.setNickname("송재현");
+			testMember.setNickname("송구이");
 
 			// 2. 서비스 호출하기
 			int result = mService.insertMember(testMember);
 
-			// 3. 결과 반환
 			if (result > 0) {
-				return "DB에 데이터 집어넣기 성공!";
+				MemberDetail memberDetail = new MemberDetail();
+				memberDetail.setMemberId(testMember.getMemberId());
+				mService.insertMemberDetail(memberDetail);
+				return ("회원가입 성공");
 			} else {
-				return "삽입된 행이 없음";
+				return ("회원가입 실패");
 			}
 
 		} catch (Exception e) {
@@ -297,9 +301,11 @@ public class MemberController {
 		return ResponseEntity.ok(dtoList);
 	}
 	
+	// 내 회원 정보 수정
 	@PatchMapping("/me")
 	public ResponseEntity<?> updateMember(
-			@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberUpdateRequestDto dto){
+			@AuthenticationPrincipal CustomUserDetails userDetails, 
+			@RequestBody MemberUpdateRequestDto dto){
 		long memberId = userDetails.getMemberId();
 		mService.updateMember(memberId, dto);
 		return ResponseEntity.ok("수정 완료");
@@ -327,6 +333,41 @@ public class MemberController {
 		}
 		
 	}
+	
+	// 본인 직접 회원 탈퇴 
+    @DeleteMapping("/me")
+    public ResponseEntity<?> withdrawMyAccount(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody(required = false) Map<String, String> request) {
+        
+        if (userDetails == null) {
+            return ResponseEntity.status(401).body("로그인이 필요한 서비스입니다.");
+        }
+        
+        long memberId = userDetails.getMemberId();
+        
+        // 탈퇴 전 비밀번호 재확인 로직
+        if (request != null && request.containsKey("password")) {
+            String rawPassword = request.get("password");
+            Member member = mService.findByMemberId(memberId);
+            
+            System.out.println(rawPassword);
+            System.out.println(member);
+
+            if (member == null || !bcrypt.matches(rawPassword, member.getPassword())) {
+                return ResponseEntity.badRequest().body("비밀번호가 일치하지 않아 탈퇴할 수 없습니다.");
+            }
+        }
+
+        try {
+            // 서비스단에 탈퇴 처리 요청 (내부적으로 상태값을 WITHDRAW 등으로 변경)
+            mService.withdrawMember(memberId);
+            return ResponseEntity.ok("회원 탈퇴가 정상적으로 처리되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("회원 탈퇴 처리 중 서버 오류가 발생했습니다.");
+        }
+    }
 	
 	// 관리자 전용 회원 목록 조회
 	@GetMapping("/admin/list")
