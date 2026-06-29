@@ -212,7 +212,7 @@
 		OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
 	</select>
 
-	<update id="withdrawMember" parameterType="long">
+	<update id="kickMember" parameterType="long">
 		UPDATE MEMBER 
 		SET MEMBER_STATUS = 'BANNED',
 			DELETED_DATE = SYSDATE
@@ -224,5 +224,12 @@
 	    SET MEMBER_STATUS = 'ACTIVE',
 	        DELETED_DATE = NULL
 	    WHERE MEMBER_ID = #{memberId}
+	</update>
+	
+	<update id="withdrawMember" parameterType="long">
+		UPDATE MEMBER 
+		SET MEMBER_STATUS = 'DELETE',
+			DELETED_DATE = SYSDATE
+		WHERE MEMBER_ID = #{memberId}
 	</update>
 </mapper>

@@ -114,7 +114,7 @@ public class MemberService {
 	// 회원 강제 탈퇴
 	@Transactional
 	public void kickMember(Long memberId) {
-		mapper.withdrawMember(memberId);
+		mapper.kickMember(memberId);
 	}
 	
 	// 회원 복구
@@ -125,6 +125,15 @@ public class MemberService {
 
 	public Member findByEmail(String email) {
 		return mapper.findByEmail(email);
+	}
+	
+	public Member findByMemberId(Long memberId) {
+		return mapper.findByMemberId(memberId);
+	}
+
+	// 본인 직접 회원 탈퇴 
+	public void withdrawMember(long memberId) {
+		mapper.withdrawMember(memberId);	
 	}
 }
 
