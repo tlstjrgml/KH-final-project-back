@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
 import com.moa.backend.wish.model.vo.Wish;
 import com.moa.backend.wish.service.WishService;
+import com.moa.backend.wish.model.dto.WishResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -59,7 +60,7 @@ public class WishController {
     
     //마이페이지에서 복지이름이나 카테고리 같은 것도 보여주려면 WelfareListDTO랑 join해서 반환
     @GetMapping
-    public ResponseEntity<List<Wish>> getWishList() {
+    public ResponseEntity<List<WishResponseDto>> getWishList() {
         return ResponseEntity.ok(wishService.getWishList(getMemberId()));
     }
 }
