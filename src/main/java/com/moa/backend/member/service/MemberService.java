@@ -124,7 +124,16 @@ public class MemberService {
     }
 
 	public Member findByEmail(String email) {
-		return mapper.findByEmail(email);
+		return mapper.findByEmail(email); 
+	}
+	
+	//프로필 이미지 변경
+	public void deleteProfileImg(Long memberId) {
+		String url = mapper.getProfileUrl(memberId);
+		if(url != null && !url.isEmpty()) {
+			s3UploadService.deleteFile(url);
+		}
+		mapper.deleteProfile(memberId);
 	}
 	
 	public Member findByMemberId(Long memberId) {
