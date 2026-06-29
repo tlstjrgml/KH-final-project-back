@@ -10,15 +10,14 @@ import com.moa.backend.board.model.mapper.BoardMapper;
 import com.moa.backend.board.model.vo.Attachment;
 import com.moa.backend.common.util.page.PageResponse;
 import com.moa.backend.common.util.page.Pagination;
-import com.moa.backend.reply.model.mapper.ReplyMapper;
 import com.moa.backend.notification.SseEmitterRepository;
+import com.moa.backend.reply.model.mapper.ReplyMapper;
 import com.moa.backend.report.dto.ReportCreateRequestDTO;
 import com.moa.backend.report.dto.ReportDetailResponseDTO;
 import com.moa.backend.report.dto.ReportListResponseDTO;
 import com.moa.backend.report.dto.ReportMyResponseDto;
 import com.moa.backend.report.dto.ReportPageRequestDTO;
 import com.moa.backend.report.dto.ReportUpdateRequestDTO;
-import com.moa.backend.report.dto.ReportedBoardInfo;
 import com.moa.backend.report.dto.ReportedReplyInfo;
 import com.moa.backend.report.model.mapper.ReportMapper;
 
@@ -107,6 +106,10 @@ public class ReportService {
 	
 	public List<ReportMyResponseDto> selectMyReportResponse(Long memberId){
 		return reportMapper.selectMyReportResponse(memberId);
+	}
+	
+	public List<ReportMyResponseDto> selectReceivedReportResponse(Long memberId){
+		return reportMapper.selectReceivedReportResponse(memberId);
 	}
 }
 	

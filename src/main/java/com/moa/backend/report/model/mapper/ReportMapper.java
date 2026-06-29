@@ -33,4 +33,5 @@ public interface ReportMapper {
 	
 	List<ReportMyResponseDto> selectMyReportResponse(Long memberId);
 	
+	List<ReportMyResponseDto> selectReceivedReportResponse(long memberId);
 }
