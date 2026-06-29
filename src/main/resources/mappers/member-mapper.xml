@@ -265,6 +265,7 @@
 	<update id="deleteProfile" parameterType="long">
 		UPDATE MEMBER_DETAIL
 		SET PROFILE_IMG = NULL
+	</update>
 	<update id="withdrawMember" parameterType="long">
 		UPDATE MEMBER 
 		SET MEMBER_STATUS = 'DELETE',
