@@ -19,10 +19,12 @@
         WHERE WELFARE_ID = #{welfareId} AND MEMBER_ID = #{memberId}
     </select>
     
-    <select id="getWishList" parameterType="Long" resultType="com.moa.backend.wish.model.vo.Wish">
-	    SELECT WELFARE_ID AS welfareId, MEMBER_ID AS memberId
-	    FROM WISH
-	    WHERE MEMBER_ID = #{memberId}	
+    <select id="getWishList" parameterType="Long" resultType="com.moa.backend.wish.model.dto.WishResponseDto">
+	   SELECT W.WELFARE_ID AS welfareId, W.LCLSF_NM AS lclsfNm, JSON_VALUE(W.FULL_DATA, '$.plcyNm') AS plcyNm,
+              WS.WISH_DATE AS wishDate
+    	FROM WISH WS
+    	JOIN WELFARE W ON WS.WELFARE_ID = W.WELFARE_ID
+    	WHERE WS.MEMBER_ID = #{memberId}
 	</select>
 
 </mapper>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.moa.backend.wish.model.mapper.WishMapper;
 import com.moa.backend.wish.model.vo.Wish;
+import com.moa.backend.wish.model.dto.WishResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +28,7 @@ public class WishService {
         return wishMapper.checkWish(wish) > 0;
     }
     
-    public List<Wish> getWishList(Long memberId) {
+    public List<WishResponseDto> getWishList(Long memberId) {
         return wishMapper.getWishList(memberId);
     }
 }
