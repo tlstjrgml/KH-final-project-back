@@ -64,11 +64,13 @@ public class MemberController {
 			// 2. 서비스 호출하기
 			int result = mService.insertMember(testMember);
 
-			// 3. 결과 반환
 			if (result > 0) {
-				return "DB에 데이터 집어넣기 성공!";
+				MemberDetail memberDetail = new MemberDetail();
+				memberDetail.setMemberId(testMember.getMemberId());
+				mService.insertMemberDetail(memberDetail);
+				return ("회원가입 성공");
 			} else {
-				return "삽입된 행이 없음";
+				return ("회원가입 실패");
 			}
 
 		} catch (Exception e) {
@@ -297,9 +299,11 @@ public class MemberController {
 		return ResponseEntity.ok(dtoList);
 	}
 	
+	// 내 회원 정보 수정
 	@PatchMapping("/me")
 	public ResponseEntity<?> updateMember(
-			@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberUpdateRequestDto dto){
+			@AuthenticationPrincipal CustomUserDetails userDetails, 
+			@RequestBody MemberUpdateRequestDto dto){
 		long memberId = userDetails.getMemberId();
 		mService.updateMember(memberId, dto);
 		return ResponseEntity.ok("수정 완료");
