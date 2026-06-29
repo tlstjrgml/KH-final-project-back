@@ -353,5 +353,34 @@
 	    WHERE ROWNUM &lt;= 4
 	</select>
 		
+		
+	<insert id="mergeWelfare" parameterType="com.moa.backend.welfare.model.vo.Welfare">
+    MERGE INTO WELFARE w
+    USING DUAL ON (w.PLCY_NO = #{plcyNo})
+    WHEN MATCHED THEN UPDATE SET
+        w.LCLSF_NM = #{lclsfNm},
+        w.MCLSF_NM = #{mclsfNm},
+        w.MRG_STTS_CD = #{mrgSttsCd},
+        w.SCHOOL_CD = #{schoolCd},
+        w.PLCY_MAJOR_CD = #{plcyMajorCd},
+        w.JOB_CD = #{jobCd},
+        w.SBIZ_CD = #{sbizCd},
+        w.SPRT_TRGT_MIN_AGE = #{sprtTrgtMinAge},
+        w.SPRT_TRGT_MAX_AGE = #{sprtTrgtMaxAge},
+        w.SPRT_TRGT_AGE_LMT_YN = #{sprtTrgtAgeLmtYn},
+        w.EARN_MIN_AMT = #{earnMinAmt},
+        w.EARN_MAX_AMT = #{earnMaxAmt},
+        w.EARN_ETC_CN = #{earnEtcCn},
+        w.FULL_DATA = #{fullData}
+    WHEN NOT MATCHED THEN INSERT (
+        PLCY_NO, LCLSF_NM, MCLSF_NM, MRG_STTS_CD, SCHOOL_CD, PLCY_MAJOR_CD,
+        JOB_CD, SBIZ_CD, SPRT_TRGT_MIN_AGE, SPRT_TRGT_MAX_AGE, SPRT_TRGT_AGE_LMT_YN,
+        EARN_MIN_AMT, EARN_MAX_AMT, EARN_ETC_CN, FULL_DATA
+    ) VALUES (
+        #{plcyNo}, #{lclsfNm}, #{mclsfNm}, #{mrgSttsCd}, #{schoolCd}, #{plcyMajorCd},
+        #{jobCd}, #{sbizCd}, #{sprtTrgtMinAge}, #{sprtTrgtMaxAge}, #{sprtTrgtAgeLmtYn},
+        #{earnMinAmt}, #{earnMaxAmt}, #{earnEtcCn}, #{fullData}
+    )
+</insert>	
 
 </mapper>
