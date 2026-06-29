@@ -56,4 +56,8 @@ public interface MemberMapper {
 	void withdrawMember(Long memberId);
 
 	void restoreMember(Long memberId);
+	
+	String getProfileUrl(@Param("memberId")Long memberId);
+	
+	int deleteProfile(@Param("memberId")Long memberId);
 }

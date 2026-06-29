@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
@@ -32,6 +33,7 @@ import com.moa.backend.member.model.dto.ReplyResponseDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
 import com.moa.backend.member.service.MemberService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -395,5 +397,17 @@ public class MemberController {
 	        e.printStackTrace();
 	        return ResponseEntity.status(500).body("복구 처리 중 서버 오류가 발생했습니다.");
 	    }
+	}
+	
+	//프로필 이미지 변경
+	@DeleteMapping("/me/profile-image")
+	public ResponseEntity<?> deleteProfileImg(@AuthenticationPrincipal CustomUserDetails userDetail){
+		long memberId = userDetail.getMemberId();
+		try {
+			mService.deleteProfileImg(memberId);
+			return ResponseEntity.ok("프로필 이미지 삭제 완료");
+		}catch(Exception e){
+			return ResponseEntity.badRequest().body("프로필 이미지 삭제 실패: " + e.getMessage());
+		}
 	}
 }

@@ -225,4 +225,18 @@
 	        DELETED_DATE = NULL
 	    WHERE MEMBER_ID = #{memberId}
 	</update>
+	
+	<!--프로필 이미지 url 조회-->
+	<select id="getProfileUrl" parameterType="long" resultType="String">
+		SELECT PROFILE_IMG
+		FROM MEMBER_DETAIL
+		WHERE MEMBER_ID = #{memberId}
+	</select>
+	
+	<!--프로필 이미지 삭제-->
+	<update id="deleteProfile" parameterType="long">
+		UPDATE MEMBER_DETAIL
+		SET PROFILE_IMG = NULL
+		WHERE MEMBER_ID = #{memberId}
+	</update>
 </mapper>
