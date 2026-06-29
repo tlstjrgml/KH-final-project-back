@@ -112,4 +112,14 @@ public class ReportController {
 		return ResponseEntity.ok(result);
 	}
 	
+	@GetMapping("/received")
+	public ResponseEntity<?> selectReceivedReportResponse(@AuthenticationPrincipal CustomUserDetails userDetails){
+		if(userDetails == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+		}
+		long memberId = userDetails.getMemberId();
+		List<ReportMyResponseDto> result = reportService.selectReceivedReportResponse(memberId);
+		return ResponseEntity.ok(result);
+	}
+	
 }

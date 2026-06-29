@@ -125,4 +125,22 @@
     	WHERE MEMBER_ID = #{memberId}
     	ORDER BY REPORT_DATE DESC
     </select>
+    
+    <select id="selectReceivedReportResponse" resultType="com.moa.backend.report.dto.ReportMyResponseDto">
+    	SELECT R.REPORT_ID, R.TARGET_TYPE, R.REPORT_DATE, R.STATUS, R.REPORT_RESULT
+    	FROM REPORT R
+    	JOIN BOARD B ON R.TARGET_ID = B.BOARD_ID
+    	WHERE B.MEMBER_ID = #{memberId}
+    		AND R.TARGET_TYPE IN ('FRE', 'REV')
+    		
+    	UNION ALL
+    	
+    	SELECT R.REPORT_ID, R.TARGET_TYPE, R.REPORT_DATE, R.STATUS, R.REPORT_RESULT
+    	FROM REPORT R
+    	JOIN REPLY RP ON R.TARGET_ID=RP.REPLY_ID
+    	WHERE RP.MEMBER_ID = #{memberId}
+    		AND R.TARGET_TYPE = 'REP'
+    		
+    	ORDER BY REPORT_DATE DESC
+    </select>
 </mapper>
