@@ -3,6 +3,7 @@ package com.moa.backend.board.model.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.moa.backend.board.dto.BoardDetailResponseDTO;
 import com.moa.backend.board.dto.BoardListResponseDTO;
@@ -35,7 +36,10 @@ public interface BoardMapper {
 
 	List<Attachment> selectAttachmentList(Long boardId);
 
-	int updateBoardContent(Long boardId, BoardUpdateRequestDTO updateData);
+	int updateBoardContent(
+		    @Param("boardId") Long boardId,
+		    @Param("updateData") BoardUpdateRequestDTO updateData
+		);
 
 	Attachment selectAttachmentById(Long attmId);
 
