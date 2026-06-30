@@ -1,15 +1,17 @@
 package com.moa.backend.common.service;
 
+import java.io.IOException;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-
-import java.io.IOException;
-import java.util.UUID;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 @Service
 public class S3UploadService {
@@ -47,5 +49,16 @@ public class S3UploadService {
 				.build();
 		
 		s3Client.deleteObject(deleteObjectRequest);
+	}
+	
+	public byte[] downloadFile(String fileUrl) {
+		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+		
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+				.bucket(bucket)
+				.key(fileName)
+				.build();
+		
+		return s3Client.getObjectAsBytes(getObjectRequest).asByteArray();
 	}
 }
