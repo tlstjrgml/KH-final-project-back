@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.moa.backend.board.dto.BoardResponseDto;
 import com.moa.backend.common.config.jwt.CustomUserDetails;
@@ -31,12 +30,12 @@ import com.moa.backend.member.model.dto.MemberPasswordUpdateRequestDto;
 import com.moa.backend.member.model.dto.MemberResponseDto;
 import com.moa.backend.member.model.dto.MemberUpdateRequestDto;
 import com.moa.backend.member.model.dto.ReplyResponseDto;
-import com.moa.backend.member.model.mapper.MemberMapper;
+import com.moa.backend.member.model.dto.SignupRequestDto;
 import com.moa.backend.member.model.vo.Member;
 import com.moa.backend.member.model.vo.MemberDetail;
 import com.moa.backend.member.service.MemberService;
 
-
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -83,14 +82,14 @@ public class MemberController {
 
 	// 이메일로 회원가입하기
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody Map<String, Object> requestData) {
+	public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto dto) {
 
 		// 1. JSON에서 이메일 인증 데이터들 먼저 꺼내기
-		String token = (String) requestData.get("token");
-		String expireTimeStr = String.valueOf(requestData.get("expireTime"));
-		String inputCode = (String) requestData.get("inputCode"); // 유저가 리액트 화면에 입력한 6자리 번호
-		String email = (String) requestData.get("email"); // 가입할 이메일
-
+		String token = dto.getToken();
+		String expireTimeStr = dto.getExpireTime();
+		String inputCode = dto.getInputCode();
+		String email = dto.getEmail();
+		
 		// 2. 데이터 누락 및 만료 시간 검사
 		if (token == null || expireTimeStr == null || inputCode == null || email == null) {
 			return ResponseEntity.badRequest().body("회원가입 요청 데이터가 올바르지 않습니다.");
@@ -110,10 +109,9 @@ public class MemberController {
 		// 4. 이메일, 닉네임 설정
 		Member member = new Member();
 		member.setEmail(email);
-		member.setNickname((String) requestData.get("nickname"));
-
+		member.setNickname(dto.getNickname());
 		// 5. 비밀번호 암호화
-		String rawPassword = (String) requestData.get("password");
+		String rawPassword = dto.getPassword();
 		member.setPassword(bcrypt.encode(rawPassword));
 		member.setLoginType("LOCAL"); // 이메일 가입이므로 LOCAL
 
