@@ -2,6 +2,9 @@ package com.moa.backend.board.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,13 +73,24 @@ public class BoardService {
 		*/
 		List<MultipartFile> files = request.getFiles();
 		if (files != null && !files.isEmpty()) {
-			for (MultipartFile file : files) {
+			Set<String> allowedExt = new HashSet<>(Arrays.asList("jpg", "jpeg", "png", "gif", "webp", "pdf", "doc", "docx"));
+			
+			for(MultipartFile file : files) {
+				String originalName = file.getOriginalFilename();
+				int dotIndex = originalName.lastIndexOf(".");
+				String ext = originalName.substring(dotIndex + 1).toLowerCase();
+				
+				if(!allowedExt.contains(ext)) {
+					throw new IllegalArgumentException("허용되지 않는 파일 형식입니다");
+				}
+				
 				String url = s3UploadService.uploadFile(file);
 				Attachment attm = new Attachment();
-				attm.setOriginalName(file.getOriginalFilename());
+				attm.setOriginalName(originalName);
 				attm.setAttmPath(url);
 				attm.setBoardId(generatedBoardId);
 				boardMapper.insertAttachment(attm);
+				
 			}
 		}
 
@@ -196,7 +210,8 @@ public class BoardService {
 					}
 					
 					// 검증 통과 시 실제 맥북 폴더에서 파일 제거 후 DB 상태값 'N' 처리
-					fileUtil.deleteFile(attm.getRenameName());
+					//fileUtil.deleteFile(attm.getRenameName()); 해당 부분은 로컬 방식이기 때문에 주석처리했습니다:신석희
+					s3UploadService.deleteFile(attm.getAttmPath());
 					boardMapper.deleteAttachment(attmId); 
 				}
 			}
@@ -204,6 +219,7 @@ public class BoardService {
 
 		List<MultipartFile> newFiles = updateData.getNewFiles();
 		if (newFiles != null && !newFiles.isEmpty()) {
+			Set<String> allowedExt = new HashSet<>(Arrays.asList("jpg", "jpeg", "png", "gif", "webp", "pdf", "doc", "docx"));
 			for (MultipartFile file : newFiles) {
 				if (!file.isEmpty()) {
 					/*
@@ -215,6 +231,13 @@ public class BoardService {
 					attm.setBoardId(boardId);
 					boardMapper.insertAttachment(attm);
 					*/
+					String originalName = file.getOriginalFilename();
+					int dotIndex = originalName.lastIndexOf(".");
+					String ext = originalName.substring(dotIndex+1).toLowerCase();
+					
+					if(!allowedExt.contains(ext)) {
+						throw new IllegalArgumentException("허용되지 않는 파일 형식입니다.");
+					}
 					String url = s3UploadService.uploadFile(file);
 					Attachment attm = new Attachment();
 					attm.setOriginalName(file.getOriginalFilename());
