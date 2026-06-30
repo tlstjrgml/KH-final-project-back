@@ -240,6 +240,10 @@ public class MemberController {
 			return ResponseEntity.status(403).body("강제 탈퇴된 회원입니다.");
 		}
 		
+		if ("DELETE".equals(member.getMemberStatus())) {
+			return ResponseEntity.status(403).body("탈퇴한 회원입니다.");
+		}
+		
 		if(bcrypt.matches(request.get("password"), member.getPassword())) {
 			
 			String token = jwtProvider.generateToken(member.getMemberId(), member.getIsAdmin(), member.getNickname());
@@ -346,21 +350,23 @@ public class MemberController {
         
         long memberId = userDetails.getMemberId();
         
+        Member member = mService.findByMemberId(memberId);
+        if (member == null) {
+            return ResponseEntity.status(404).body("존재하지 않는 회원 정보입니다.");
+        }
+        
+        if (request == null || !request.containsKey("password")) {
+            return ResponseEntity.badRequest().body("비밀번호 확인이 필요합니다.");
+        }
+        
+        String rawPassword = request.get("password");
         // 탈퇴 전 비밀번호 재확인 로직
-        if (request != null && request.containsKey("password")) {
-            String rawPassword = request.get("password");
-            Member member = mService.findByMemberId(memberId);
-            
-            System.out.println(rawPassword);
-            System.out.println(member);
-
-            if (member == null || !bcrypt.matches(rawPassword, member.getPassword())) {
-                return ResponseEntity.badRequest().body("비밀번호가 일치하지 않아 탈퇴할 수 없습니다.");
-            }
+        if (!bcrypt.matches(rawPassword, member.getPassword())) {
+            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않아 탈퇴할 수 없습니다.");
         }
 
         try {
-            // 서비스단에 탈퇴 처리 요청 (내부적으로 상태값을 WITHDRAW 등으로 변경)
+            // 서비스단에 탈퇴 처리 요청
             mService.withdrawMember(memberId);
             return ResponseEntity.ok("회원 탈퇴가 정상적으로 처리되었습니다.");
         } catch (Exception e) {
