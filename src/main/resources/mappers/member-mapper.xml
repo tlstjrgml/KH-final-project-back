@@ -266,10 +266,12 @@
 		UPDATE MEMBER_DETAIL
 		SET PROFILE_IMG = NULL
 	</update>
+	
 	<update id="withdrawMember" parameterType="long">
 		UPDATE MEMBER 
 		SET MEMBER_STATUS = 'DELETE',
-			DELETED_DATE = SYSDATE
+			DELETED_DATE = SYSDATE,
+			NICKNAME = '탈퇴한 회원'
 		WHERE MEMBER_ID = #{memberId}
 	</update>
 </mapper>
