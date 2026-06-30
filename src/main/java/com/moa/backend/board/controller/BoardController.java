@@ -174,12 +174,18 @@ public class BoardController {
 		AttachmentDownloadDto dto = bService.downloadAttm(attmId);
 		String originalName = dto.getOriginalName();
 		byte[] fileData = dto.getFileData();
+		
+		String encodedName = java.net.URLEncoder.encode(originalName, java.nio.charset.StandardCharsets.UTF_8)
+				.replaceAll("\\+", "%20");
+		
 		HttpHeaders header = new HttpHeaders();
-		header.add("Content-Disposition", "attachment; filename=\"" + originalName + "\"");
+		header.add("Content-Disposition", "attachment; filename*=UTF-8''" + encodedName);
 		header.add("Content-Type", "application/octet-stream");
+		
 		return new ResponseEntity<>(fileData, header, HttpStatus.OK);
 	}
 	
+
 	
 	
 	

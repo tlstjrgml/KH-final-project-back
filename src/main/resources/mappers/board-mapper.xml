@@ -193,10 +193,10 @@
     </select>
     
     <select id="selectAttachmentById" parameterType="long" resultType="Attachment">
-        SELECT ATTM_ID, RENAME_NAME, BOARD_ID 
-        FROM ATTACHMENT 
-        WHERE ATTM_ID = #{attmId}
-    </select>
+	    SELECT ATTM_ID, ORIGINAL_NAME, RENAME_NAME, ATTM_PATH, BOARD_ID
+	    FROM ATTACHMENT
+	    WHERE ATTM_ID = #{attmId}
+	</select>
 
     <update id="deleteAttachment" parameterType="long">
         UPDATE ATTACHMENT 

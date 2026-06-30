@@ -193,7 +193,7 @@ public class BoardService {
 	}
 	
 	public AttachmentDownloadDto downloadAttm(Long attmId) {
-		Attachment attm = boardMapper.selectAttachmentById(AttmId);
+		Attachment attm = boardMapper.selectAttachmentById(attmId);
 		if(attm == null) {
 			throw new IllegalArgumentException("존재하지않는 파일입니다");
 		}
