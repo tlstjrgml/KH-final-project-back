@@ -34,6 +34,7 @@ public class SecurityConfig {
                     config.setAllowedOrigins(java.util.List.of("http://localhost:5173", "http://localhost:5174"));
                     config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
                     config.setAllowedHeaders(java.util.List.of("*"));
+                    config.setExposedHeaders(java.util.List.of("Content-Disposition"));
                     config.setAllowCredentials(true);
                     return config;
                 })

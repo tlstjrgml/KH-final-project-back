@@ -1,5 +1,6 @@
 package com.moa.backend.board.controller;
 
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
 
+
+import com.moa.backend.board.dto.AttachmentDownloadDto;
 import com.moa.backend.board.dto.BoardCreateRequest;
 import com.moa.backend.board.dto.BoardDetailResponseDTO;
 import com.moa.backend.board.dto.BoardListResponseDTO;
@@ -164,5 +168,26 @@ public class BoardController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회 중 오류가 발생했습니다.");
 	    }
 	}
+	
+	@GetMapping("/attachment/{attmId}")
+	public ResponseEntity<byte[]> downloadAttm(@PathVariable Long attmId){
+		AttachmentDownloadDto dto = bService.downloadAttm(attmId);
+		String originalName = dto.getOriginalName();
+		byte[] fileData = dto.getFileData();
+		
+		String encodedName = java.net.URLEncoder.encode(originalName, java.nio.charset.StandardCharsets.UTF_8)
+				.replaceAll("\\+", "%20");
+		
+		HttpHeaders header = new HttpHeaders();
+		header.add("Content-Disposition", "attachment; filename*=UTF-8''" + encodedName);
+		header.add("Content-Type", "application/octet-stream");
+		
+		return new ResponseEntity<>(fileData, header, HttpStatus.OK);
+	}
+	
+
+	
+	
+	
 	
 }
