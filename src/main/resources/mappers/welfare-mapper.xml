@@ -157,6 +157,19 @@
 		        JSON_VALUE(w.FULL_DATA, '$.plcyNm'),
 		        JSON_VALUE(w.FULL_DATA, '$.aplyYmd'),
 		        JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm')
+		        HAVING 1=1
+				<if test="sort == '진행중'">
+				    AND (
+				        JSON_VALUE(w.FULL_DATA, '$.aplyYmd') IS NULL
+				        OR NOT REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '~')
+				        OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
+				    )
+				</if>
+				<if test="sort == '마감됨'">
+				    AND JSON_VALUE(w.FULL_DATA, '$.aplyYmd') IS NOT NULL
+				    AND REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '~')
+				    AND TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &lt; SYSDATE
+				</if>
 		    <choose>
 		        <when test="sort == '찜 많은순'">
 		            ORDER BY wishCount DESC, w.WELFARE_ID DESC
@@ -228,6 +241,18 @@
 		        </foreach>
 		    )
 		</if>
+		<if test="sort == '진행중'">
+		    AND (
+		        JSON_VALUE(FULL_DATA, '$.aplyYmd') IS NULL
+		        OR NOT REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '~')
+		        OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
+		    )
+		</if>
+		<if test="sort == '마감됨'">
+		    AND JSON_VALUE(FULL_DATA, '$.aplyYmd') IS NOT NULL
+		    AND REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '~')
+		    AND TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &lt; SYSDATE
+		</if>		
     </select>
     
     <!-- 메인화면 개인 복지추천 서비스 -->
@@ -267,6 +292,11 @@
 	                    </if>
 	                )
 	            </if>
+	             AND (
+                JSON_VALUE(FULL_DATA, '$.aplyYmd') IS NULL
+                OR NOT REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '~')
+                OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
+            )
 	        </where>
 	        ORDER BY DBMS_RANDOM.VALUE
 	    )
@@ -330,6 +360,11 @@
 				    <if test="lclsfNm == '교육'">OR LCLSF_NM LIKE '%교육･직업훈련%'</if>
 				    )
 				</if>
+				 AND (
+                JSON_VALUE(FULL_DATA, '$.aplyYmd') IS NULL
+                OR NOT REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '~')
+                OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
+            )
 	        </where>
 	        ORDER BY DBMS_RANDOM.VALUE
 	    )
@@ -363,6 +398,11 @@
 	            <if test="region != null and region != ''">
 	                AND REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.zipCd'), '(^|,)' || #{region} || '[0-9]{3}(,|$)')
 	            </if>
+	            AND (
+                JSON_VALUE(FULL_DATA, '$.aplyYmd') IS NULL
+                OR NOT REGEXP_LIKE(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '~')
+                OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
+            )
 	        </where>
 	        ORDER BY DBMS_RANDOM.VALUE
 	    )
