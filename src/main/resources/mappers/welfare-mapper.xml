@@ -153,23 +153,22 @@
 			        </foreach>
 			    )
 			</if>
+		    <if test="sort == '진행중'">
+		        AND (
+		            JSON_VALUE(w.FULL_DATA, '$.aplyYmd') IS NULL
+		            OR NOT REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '~')
+		            OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
+		        )
+		    </if>
+		    <if test="sort == '마감됨'">
+		        AND JSON_VALUE(w.FULL_DATA, '$.aplyYmd') IS NOT NULL
+		        AND REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '~')
+		        AND TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &lt; SYSDATE
+		    </if>
 		    GROUP BY w.WELFARE_ID, w.LCLSF_NM,
 		        JSON_VALUE(w.FULL_DATA, '$.plcyNm'),
 		        JSON_VALUE(w.FULL_DATA, '$.aplyYmd'),
 		        JSON_VALUE(w.FULL_DATA, '$.sprvsnInstCdNm')
-		        HAVING 1=1
-				<if test="sort == '진행중'">
-				    AND (
-				        JSON_VALUE(w.FULL_DATA, '$.aplyYmd') IS NULL
-				        OR NOT REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '~')
-				        OR TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &gt;= SYSDATE
-				    )
-				</if>
-				<if test="sort == '마감됨'">
-				    AND JSON_VALUE(w.FULL_DATA, '$.aplyYmd') IS NOT NULL
-				    AND REGEXP_LIKE(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '~')
-				    AND TO_DATE(TRIM(REGEXP_SUBSTR(JSON_VALUE(w.FULL_DATA, '$.aplyYmd'), '[0-9]{8}$')), 'YYYYMMDD') &lt; SYSDATE
-				</if>
 		    <choose>
 		        <when test="sort == '찜 많은순'">
 		            ORDER BY wishCount DESC, w.WELFARE_ID DESC
