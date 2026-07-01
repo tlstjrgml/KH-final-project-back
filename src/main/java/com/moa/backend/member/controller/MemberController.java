@@ -455,4 +455,80 @@ public class MemberController {
 			return ResponseEntity.badRequest().body("프로필 이미지 삭제 실패: " + e.getMessage());
 		}
 	}
+	
+	//임시 비밀번호 변경
+	@PostMapping("/find-pw/everify")
+	public ResponseEntity<Map<String, Object>> findPwEverify(@RequestBody Map<String, String> request) {
+	    String email = request.get("email");
+	    String expireTimeStr = request.get("expireTime");
+	    String inputCode = request.get("inputCode");
+	    String token = request.get("token");
+
+	    Map<String, Object> responseBody = new HashMap<>();
+
+	    if (email == null || expireTimeStr == null || inputCode == null || token == null) {
+	        responseBody.put("success", false);
+	        responseBody.put("message", "잘못된 인증 요청입니다. 데이터가 누락되었습니다.");
+	        return ResponseEntity.badRequest().body(responseBody);
+	    }
+
+	    long expireTime = Long.parseLong(expireTimeStr);
+
+	    if (System.currentTimeMillis() > expireTime) {
+	        responseBody.put("success", false);
+	        responseBody.put("message", "인증 시간이 만료되었습니다. 인증번호를 다시 받아주세요.");
+	        return ResponseEntity.badRequest().body(responseBody);
+	    }
+
+	    boolean isVerified = authProvider.verifyToken(email, inputCode, expireTime, token);
+	    if (!isVerified) {
+	        responseBody.put("success", false);
+	        responseBody.put("message", "인증번호가 일치하지 않거나 올바르지 않은 접근입니다.");
+	        return ResponseEntity.badRequest().body(responseBody);
+	    }
+
+	    String tempPassword = authProvider.generateTempPassword();
+
+	    String encodedPassword = bcrypt.encode(tempPassword);
+	    mService.updateTempPassword(email, encodedPassword);
+
+	    authProvider.sendTempPasswordEmail(email, tempPassword);
+
+	    responseBody.put("success", true);
+	    responseBody.put("message", "임시 비밀번호가 이메일로 발송되었습니다.");
+	    return ResponseEntity.ok(responseBody);
+	}
+	
+	@PostMapping("/find-pw/echeck")
+	public ResponseEntity<Map<String, Object>> findPwEcheck(@RequestBody Map<String, String> request) {
+	    String email = request.get("email");
+
+	    if (email == null || email.isEmpty()) {
+	        Map<String, Object> errorResponse = new HashMap<>();
+	        errorResponse.put("success", false);
+	        errorResponse.put("message", "이메일을 입력해주세요.");
+	        return ResponseEntity.badRequest().body(errorResponse);
+	    }
+
+	    if (mService.findByEmail(email) == null) {
+	        Map<String, Object> errorResponse = new HashMap<>();
+	        errorResponse.put("success", false);
+	        errorResponse.put("message", "존재하지 않는 이메일입니다.");
+	        return ResponseEntity.badRequest().body(errorResponse);
+	    }
+
+	    String verificationCode = authProvider.generateVerificationCode();
+	    authProvider.sendAuthEmail(email, verificationCode);
+
+	    long expireTime = System.currentTimeMillis() + 5 * 60 * 1000;
+	    String hmacToken = authProvider.createHmacToken(email, verificationCode, expireTime);
+
+	    Map<String, Object> responseBody = new HashMap<>();
+	    responseBody.put("email", email);
+	    responseBody.put("expireTime", expireTime);
+	    responseBody.put("token", hmacToken);
+	    responseBody.put("DEBUG_ONLY_CODE", verificationCode); // 테스트 후 반드시 삭제!
+
+	    return ResponseEntity.ok(responseBody);
+	}
 }

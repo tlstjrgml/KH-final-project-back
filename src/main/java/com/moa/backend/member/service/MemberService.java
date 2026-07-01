@@ -144,5 +144,10 @@ public class MemberService {
 	public void withdrawMember(long memberId) {
 		mapper.withdrawMember(memberId);	
 	}
+	
+	//임시 비밀번호
+	public int updateTempPassword(String email, String password) {
+		return mapper.updateTempPassword(email, password);
+	}
 }
 

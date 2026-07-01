@@ -3,6 +3,7 @@ package com.moa.backend.common.util;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Random;
 
@@ -85,8 +86,43 @@ public class EmailAuthProvider {
 		// inputCode 유저가 이메일로 받은 인증번호
 		// expireTime 리액트에서 보낸 만료시간
 		// clientToken 리액트에서 보낸 HMAC토큰
+		if(System.currentTimeMillis() > expireTime) {return false;}
 		String recalculatedToken = createHmacToken(email, inputCode, expireTime);
 		return recalculatedToken.equals(clientToken);
+	}
+	
+	//임시 비밀번호 생성
+	public String generateTempPassword() {
+		String charPool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+		SecureRandom secureRandom = new SecureRandom();
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = 0; i < 12; i++) {
+			sb.append(charPool.charAt(secureRandom.nextInt(charPool.length())));
+			
+		}
+		return sb.toString();
+	}
+	
+	//임시비밀번호 초기화 인증 메일 발송
+	public void sendTempPasswordEmail(String email, String tempPassword) {
+	    MimeMessage mimeMessage = mailSender.createMimeMessage();
+	    String subject = "[MOA] 임시 비밀번호 발급 안내";
+	    String body = "<h1 align='center'>MOA 임시 비밀번호 안내</h1><br/>";
+	    body += "<div style='border: 3px solid skyblue; text-align: center; font-size: 15px; padding: 20px;'>";
+	    body += "임시 비밀번호가 발급되었습니다.<br/>";
+	    body += "아래 임시 비밀번호로 로그인 후 반드시 비밀번호를 변경해주세요.<br/><br/>";
+	    body += "<span style='font-size: 30px; text-decoration: underline;'><b>" + tempPassword + "</b></span><br/></div>";
+
+	    MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+	    try {
+	        mimeMessageHelper.setTo(email);
+	        mimeMessageHelper.setSubject(subject);
+	        mimeMessageHelper.setText(body, true);
+	        mailSender.send(mimeMessage);
+	    } catch (MessagingException e) {
+	        e.printStackTrace();
+	    }
 	}
 }
 
