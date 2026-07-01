@@ -274,4 +274,11 @@
 			NICKNAME = '탈퇴한 회원'
 		WHERE MEMBER_ID = #{memberId}
 	</update>
+	
+	<!--임시비밀번호 발급-->
+	<update id="updateTempPassword">
+		UPDATE MEMBER
+		SET PASSWORD = #{password}
+		WHERE EMAIL = #{email}
+	</update>
 </mapper>

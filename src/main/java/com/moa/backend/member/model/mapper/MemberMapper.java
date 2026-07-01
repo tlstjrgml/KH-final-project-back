@@ -62,4 +62,7 @@ public interface MemberMapper {
 	int deleteProfile(@Param("memberId")Long memberId);
 
 	void kickMember(Long memberId);
+	
+	//임시비밀번호
+	int updateTempPassword(@Param("email")String email, @Param("password")String password);
 }
