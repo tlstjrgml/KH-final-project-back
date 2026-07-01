@@ -527,7 +527,6 @@ public class MemberController {
 	    responseBody.put("email", email);
 	    responseBody.put("expireTime", expireTime);
 	    responseBody.put("token", hmacToken);
-	    responseBody.put("DEBUG_ONLY_CODE", verificationCode); // 테스트 후 반드시 삭제!
 
 	    return ResponseEntity.ok(responseBody);
 	}
