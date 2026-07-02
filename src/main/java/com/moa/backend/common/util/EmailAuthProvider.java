@@ -72,7 +72,7 @@ public class EmailAuthProvider {
 			mac = Mac.getInstance(ALGORITHM);
 			mac.init(secretKeySpec);
 
-			// 해시값 계산 및 Base64 인코딩 (주소창이나 JSON으로 안전하게 보내기 위함)
+			// 해시값 계산 및 Base64 인코딩  
 			byte[] hmacBytes = mac.doFinal(rawData.getBytes(StandardCharsets.UTF_8));
 			return Base64.getUrlEncoder().withoutPadding().encodeToString(hmacBytes);
 		} catch (NoSuchAlgorithmException | InvalidKeyException e) {

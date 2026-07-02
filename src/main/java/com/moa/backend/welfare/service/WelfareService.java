@@ -123,7 +123,6 @@ public class WelfareService {
         return mapper.getCategoryList();
     }
 
-    // 공통부분 묶기
 
     private String resolveRegionCode(String region) {
         return region != null ? mapper.getRegionCode(region) : null;

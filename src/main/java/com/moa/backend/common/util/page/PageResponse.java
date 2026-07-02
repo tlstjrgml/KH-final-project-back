@@ -11,8 +11,8 @@ import lombok.ToString;
 @ToString
 public class PageResponse<T> {
 
-    private List<T> content;        // 실제 DB에서 잘라온 데이터 리스트 (Board 등)
-    private Pagination pagination;  // 위에서 계산한 페이징 정보
+    private List<T> content;        
+    private Pagination pagination;   
 
     public PageResponse(List<T> content, Pagination pagination) {
         this.content = content;

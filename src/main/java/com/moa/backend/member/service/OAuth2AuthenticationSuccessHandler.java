@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import com.moa.backend.common.config.jwt.JwtProvider;
 import com.moa.backend.member.model.vo.Member;
-//카카오 로그인 성공 후 jwt 토큰 발급 및 클라이언트로 전달하는 핸들러, securityconfig의 succeshandler로 등록되어 로그인 성공 시 자동 호출 
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -24,7 +23,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-    //인증 객체에서 카카오 사용자 정보 추출 
     OAuth2User oAuthUser = (OAuth2User) authentication.getPrincipal();
     Long kakaoId = (Long) oAuthUser.getAttributes().get("id");
     Member member = mService.findByKakaoId(kakaoId);
@@ -32,7 +30,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     Long memberId = member.getMemberId();
     //jwt토큰 발급 
     String token = jwtProvider.generateToken(memberId, member.getIsAdmin(), member.getNickname());
-    //토큰을 쿼리스트링에 담다 리다이렉
+    //토큰을 쿼리스트링에 담아 리다이렉
     response.sendRedirect("http://localhost:5173/?token=" + token);
     }
 }

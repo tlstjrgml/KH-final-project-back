@@ -14,9 +14,7 @@ public class BoardUpdateRequestDTO {
 	private String boardContent;
 	private Long welfareId;
 
-	// 삭제 기존 첨부파일의 ID 목록
 	private List<Long> deleteFileIds;
 
-	// 새로 추가한 파일 파일들
 	private List<MultipartFile> newFiles;
 }

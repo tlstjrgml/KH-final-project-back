@@ -42,10 +42,8 @@ public class ReportController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요한 서비스입니다.");
             }
             
-            // 토큰에서 추출한 로그인 유저 ID를 DTO에 세팅
             request.setMemberId(userDetails.getMemberId());
             
-            // 서비스 호출
             reportService.insertReport(request);
             
             return ResponseEntity.status(HttpStatus.CREATED).body("신고가 정상적으로 접수되었습니다.");

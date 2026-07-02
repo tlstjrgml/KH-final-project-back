@@ -8,10 +8,9 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ReportCreateRequestDTO {
-    private Long targetId;      // 대상 번호
-    private String targetType;  // 대상 타입 (FRE / REV / REP)
-    private String reason;      // 신고 이유
+    private Long targetId;       
+    private String targetType;  
+    private String reason;      
     
-    // 서비스단에서 로그인한 유저 ID를 심어줄 필드
-    private Long memberId;      // 신고자 아이디
+    private Long memberId;      
 }

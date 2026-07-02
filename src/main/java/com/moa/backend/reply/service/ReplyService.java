@@ -21,10 +21,8 @@ public class ReplyService {
 	private final ReplyMapper replyMapper;
 
 	public int insertReply(Reply reply) {
-		// 만약 사용자가 대댓글(R)을 달겠다고 요청한 경우
         if ("R".equals(reply.getCode())) {
             
-            // 1. 프론트엔드가 보낸 refId(부모 댓글 번호)로 부모 데이터를 DB에서 땡겨옵니다.
             Reply parentReply = replyMapper.selectReplyById(reply.getRefId());
             
             // 부모 댓글이 존재하지 않는 경우 차단
@@ -34,7 +32,6 @@ public class ReplyService {
             
             // 부모 댓글의 구분이 이미 'R'(대댓글)인 경우
             if ("R".equals(parentReply.getCode())) {
-                // 대댓글에 또 대댓글을 다는 행위이므로 예외를 발생시켜 작업을 중단시킵니다.
                 throw new IllegalStateException("대댓글에는 더 이상 대댓글을 달 수 없습니다.");
             }
         }
@@ -47,18 +44,15 @@ public class ReplyService {
 	}
 
 	public PageResponse<ReplyListResponseDTO> getReplyList(Long refId, PageRequest pageRequest) {
-		// 마이바티스용 파라미터 맵
 		Map<String, Object> params = new HashMap<>();
-		params.put("refId", refId); // 조회할 boardId
+		params.put("refId", refId);  
 
-		int offset = (pageRequest.getPage() - 1) * pageRequest.getLimit(); // 몇개를 건너뛸것인가?
+		int offset = (pageRequest.getPage() - 1) * pageRequest.getLimit();  
 		params.put("offset", offset);
 		params.put("limit", pageRequest.getLimit());
 
-		// DB에서 댓글 갯수를 가져옴
 		int totalItems = replyMapper.selectReplyCount(params); 
 		
-		// 페이징처리 대댓글 포함 특정 boardId의 댓글 가져오기
 		List<ReplyListResponseDTO> content = replyMapper.selectReplyList(params);
 
 		Pagination pagination = new Pagination(pageRequest, totalItems);
@@ -73,12 +67,12 @@ public class ReplyService {
 			throw new IllegalArgumentException("존재하지 않거나 이미 삭제된 댓글입니다.");
 		}
 
-		// 2. 글 작성자 ID와 현재 로그인한 유저 ID가 일치하는지 확인
+		// 글 작성자 ID와 현재 로그인한 유저 ID가 일치하는지 확인
 		if (!reply.getMemberId().equals(memberId)) {
 			throw new IllegalArgumentException("본인이 작성한 댓글만 삭제할 수 있습니다.");
 		}
 
-		// 3. 검증 통과 시 상태값 업데이트 때리기
+		// 검증 통과 시 상태값 업데이트
 		int result = replyMapper.deleteReply(replyId);
 		if (result == 0) {
 			throw new IllegalArgumentException("삭제 처리에 실패했습니다.");

@@ -13,7 +13,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class BoardDetailResponseDTO {
-	// 기존 Board vo클래스와 동일한 부분
 	private Long boardId;
 	private String boardTitle;
 	private String boardContent;
@@ -28,12 +27,11 @@ public class BoardDetailResponseDTO {
 	private Long memberId;
 	private Long welfareId;
 	
-	// DTO 추가
-    private String writerNickname; 	// 작성자 닉네임
-    private Integer likeCount;		// 좋아요 수
+    private String writerNickname; 	
+    private Integer likeCount;		 
     
-    private Boolean isLiked; 		// 내가 좋아요 눌렀는지 여부
-    private Boolean isOwner;		// 작성자 여부
+    private Boolean isLiked; 		 
+    private Boolean isOwner;		 
     
-    private List<Attachment> attachments;	// 첨부파일 목록
+    private List<Attachment> attachments;	 
 }

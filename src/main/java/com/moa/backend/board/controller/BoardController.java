@@ -37,17 +37,6 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
 	private final BoardService bService;
-
-//	@PostMapping("/write")
-//	public ResponseEntity<?> writeBoard(@RequestBody Board board,
-//			@AuthenticationPrincipal CustomUserDetails userDetails) {
-//
-//		// JWT통해 받은 memberId로 변경
-//		board.setMemberId(userDetails.getMemberId());
-//		Board savedBoard = bService.insertBoard(board);
-//
-//		return ResponseEntity.ok(savedBoard);
-//	}
 	
 	@PostMapping(value = "/write", consumes = { "multipart/form-data" })
 	public ResponseEntity<?> writeBoard(
@@ -75,7 +64,7 @@ public class BoardController {
 
 	// 게시글 상세 조회
 	@GetMapping("/{boardId}")
-	public ResponseEntity<?> getBoardDetail(@PathVariable("boardId") Long boardId, // 아까 배운 억까 방지용 ("boardId") 명시!
+	public ResponseEntity<?> getBoardDetail(@PathVariable("boardId") Long boardId, 
 			@AuthenticationPrincipal CustomUserDetails userDetails // 로그인 안한 경우 null
 	) {
 		try {
@@ -136,7 +125,6 @@ public class BoardController {
 	@GetMapping("/list")
 	public ResponseEntity<?> getBoardList(BoardPageRequest boardPageRequest) {
 		try {
-			// 게시판 전용 요청 DTO를 서비스로 토스
 			PageResponse<BoardListResponseDTO> response = bService.getBoardList(boardPageRequest);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {

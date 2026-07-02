@@ -92,14 +92,12 @@
             B.MEMBER_ID         AS memberId,
             B.WELFARE_ID        AS welfareId,
             
-            M.NICKNAME   AS writerNickname, -- 1. 작성자 닉네임 가져오기
-            NVL(L.LIKE_COUNT, 0) AS likeCount       -- 2. 좋아요 개수 (없으면 0개 처리)
+            M.NICKNAME   AS writerNickname, 
+            NVL(L.LIKE_COUNT, 0) AS likeCount        
         FROM BOARD B
         
-        -- [JOIN 1] 작성자 닉네임을 가져오기 위한 MEMBER 테이블 조인
         JOIN MEMBER M ON (B.MEMBER_ID = M.MEMBER_ID)
         
-        -- [JOIN 2] 게시글별 좋아요 총 개수를 미리 세어둔 서브쿼리와 조인 (LEFT JOIN 필수!)
         LEFT JOIN (
             SELECT BOARD_ID, COUNT(*) AS LIKE_COUNT
             FROM LIKES

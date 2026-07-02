@@ -17,12 +17,12 @@ public class Report {
 	private Long reportId;
 	private Long targetId;
 	
-	private String targetType;	// FRE, REV, REP
+	private String targetType;	 
 	
 	private LocalDateTime reportDate;
-	private String reason; 		// NULL 허용 
+	private String reason; 		 
 	
-	private String status;		//PENDING, DONE, REJECT / DEFAULT: PENDING)
+	private String status;		 
 	private String reportResult;
 	private Long memberId;
 }

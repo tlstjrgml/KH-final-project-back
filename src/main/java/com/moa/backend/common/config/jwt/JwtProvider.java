@@ -14,7 +14,7 @@ public class JwtProvider {
 	// application.properties에서 주입받는 서명용 비밀키
 	@Value("${jwt.secret}")
 	private String secretKey;
-	// application.properties에서 주입받는 만료 시간(3600초)
+	// application.properties에서 주입받는 만료 시간
 	@Value("${jwt.expiration}")
 	private long expiration;
 
