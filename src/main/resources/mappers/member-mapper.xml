@@ -207,7 +207,6 @@
 		M.EMAIL AS email,
 		M.NICKNAME AS nickname,
 		M.SIGNUP_DATE AS signupDate,
-		/* 💡 추가된 누적 신고 횟수 계산 서브쿼리 */
 		(
 		SELECT COUNT(R.REPORT_ID)
 		FROM REPORT R
