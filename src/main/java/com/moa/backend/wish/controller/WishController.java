@@ -58,7 +58,6 @@ public class WishController {
         return ResponseEntity.ok(wishService.checkWish(wish));
     }
     
-    //마이페이지에서 복지이름이나 카테고리 같은 것도 보여주려면 WelfareListDTO랑 join해서 반환
     @GetMapping
     public ResponseEntity<List<WishResponseDto>> getWishList() {
         return ResponseEntity.ok(wishService.getWishList(getMemberId()));

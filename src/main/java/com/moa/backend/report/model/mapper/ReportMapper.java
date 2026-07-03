@@ -17,7 +17,6 @@ public interface ReportMapper {
 
 	int insertReport(ReportCreateRequestDTO dto);
 	
-	// 추가
 	int checkDuplicateReport(ReportCreateRequestDTO dto);
 
 	int selectReportCount(ReportPageRequestDTO reportPageRequest);

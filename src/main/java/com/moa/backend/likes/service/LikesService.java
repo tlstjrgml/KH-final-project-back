@@ -13,7 +13,6 @@ public class LikesService {
 	private final LikesMapper mapper;
 
 	public boolean checkLikeStatus(Likes likes) {
-		// DB에서 일치하는 행의 개수를 count해옴
 		int count = mapper.checkLikeStatus(likes);
 
 		return count > 0;

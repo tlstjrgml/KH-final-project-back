@@ -44,7 +44,7 @@ public class ReplyController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("댓글 등록에 실패했습니다.");
 			}
 		} catch (IllegalStateException | IllegalArgumentException e) {
-			// 서비스단에서 던진 "대대댓글 금지" 메시지를 그대로 프론트엔드에 리턴 (400 에러)
+			// 서비스단에서 전달하 "대대댓글 금지" 메시지를 그대로 프론트엔드에 리턴 (400 에러)
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();

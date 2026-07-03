@@ -36,7 +36,7 @@ public class LikesController {
 		likes.setBoardId(boardId);
 		likes.setMemberId(userDetails.getMemberId());
 
-		// 서비스단에서 조사 개시 (결과는 true 아니면 false)
+		// 서비스단에서 조사 개시 (true or false)
 		boolean isLiked = lService.checkLikeStatus(likes);
 
 		return ResponseEntity.ok(isLiked);
@@ -45,7 +45,7 @@ public class LikesController {
 	// 좋아요 등록
 	@PostMapping
 	public ResponseEntity<?> insertLike(
-			@PathVariable("boardId") Long boardId, // 주소에서 boardId 얻음
+			@PathVariable("boardId") Long boardId,  
 			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		try {
 			Likes likes = new Likes();
@@ -55,7 +55,7 @@ public class LikesController {
 			return ResponseEntity.ok("좋아요 성공");
 		} catch (Exception e) {
 			e.printStackTrace();
-			// 프론트엔드한테 400(Bad Request) 코드와 함께 에러 메시지 쏘기
+			// 프론트엔드에 400 코드와 에러메세지 전
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("좋아요 등록 실패: 존재하지 않는 게시글이거나 잘못된 요청입니다.");
 		}
 	}

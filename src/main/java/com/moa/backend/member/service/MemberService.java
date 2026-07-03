@@ -43,10 +43,7 @@ public class MemberService {
 	public Member login(String email) {
 		return mapper.findByEmail(email);
 	}
-//membersMe APi에서 nickname을 주기 때문에 중복 가능성이 있습니다 확인후 처리해주세요
-//	public Member getMember(Long memberId) {
-//	    return mapper.getMember(memberId);
-//	}
+
 	public MemberResponseDto membersMe(long memberId) {
 		return mapper.memberDetail(memberId);
 	}

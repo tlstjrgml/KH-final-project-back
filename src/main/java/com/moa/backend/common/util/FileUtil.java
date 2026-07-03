@@ -23,7 +23,7 @@ public class FileUtil {
 
 		try {
 			File folder = new File(savePath);
-			if (!folder.exists()) // 폴더 없으면 만든다.
+			if (!folder.exists())  
 				folder.mkdirs();
 
 			// 원본 	파일 이름(확장자 포함)

@@ -40,11 +40,8 @@ public class ReportService {
 			throw new IllegalArgumentException("잘못된 대상 타입입니다. (FRE, REV, REP만 가능)");
 		}
 		
-		// 중복 신고 검증 로직 추가
-		// DB에 동일한 memberId와 targetId로 신고한 내역이 있는지 카운트를 가져옵니다.
 		int duplicateCount = reportMapper.checkDuplicateReport(request);
 		if (duplicateCount > 0) {
-			// 프론트엔드의 catch 블록으로 에러 메시지를 던집니다.
 			throw new IllegalArgumentException("이미 신고한 게시물입니다.");
 		}
 		
