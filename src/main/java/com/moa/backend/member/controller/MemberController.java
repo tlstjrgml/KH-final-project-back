@@ -233,11 +233,22 @@ public class MemberController {
 
 	@PatchMapping("/me")
 	public ResponseEntity<?> updateMember(
-			@AuthenticationPrincipal CustomUserDetails userDetails,
-			@RequestBody MemberUpdateRequestDto dto){
-		long memberId = userDetails.getMemberId();
-		mService.updateMember(memberId, dto);
-		return ResponseEntity.ok("수정 완료");
+	    @AuthenticationPrincipal CustomUserDetails userDetails,
+	    @RequestBody MemberUpdateRequestDto dto){
+	    long memberId = userDetails.getMemberId();
+	    mService.updateMember(memberId, dto);
+	    
+	    // 업데이트된 최신 회원 정보 재조회
+	    Member updatedMember = mService.findByMemberId(memberId);
+	    
+	    // 새 토큰 발급
+	    String newToken = jwtProvider.generateToken(
+	        updatedMember.getMemberId(),
+	        updatedMember.getIsAdmin(),
+	        updatedMember.getNickname()
+	    );
+	    
+	    return ResponseEntity.ok(Map.of("token", newToken));
 	}
 
 	@PatchMapping("/me/password")

@@ -1,0 +1,39 @@
+@startuml
+actor Client
+participant BoardController
+participant BoardService as "bService"
+participant BoardMapper
+participant S3UploadService
+participant S3Client
+
+Client -> BoardController : GET /attachment/{attmId}
+activate BoardController
+
+BoardController -> BoardService : downloadAttm(attmId)
+activate BoardService
+
+BoardService -> BoardMapper : selectAttachmentById(attmId)
+BoardMapper --> BoardService : Attachment (또는 null)
+
+alt attm == null
+    BoardService --> BoardController : IllegalArgumentException 발생
+    BoardController --> Client : 예외 응답
+else attm 존재
+    BoardService -> S3UploadService : downloadFile(attm.getAttmPath())
+    activate S3UploadService
+    S3UploadService -> S3Client : getObject(...)
+    S3Client --> S3UploadService : byte[] fileData
+    S3UploadService --> BoardService : byte[] fileData
+    deactivate S3UploadService
+
+    BoardService --> BoardController : AttachmentDownloadDto(originalName, fileData)
+    deactivate BoardService
+
+    BoardController -> BoardController : URLEncoder.encode(originalName, UTF-8)\n+"%20"로 치환
+    BoardController -> BoardController : Content-Disposition 헤더 설정\n(filename*=UTF-8''+encodedName)
+
+    BoardController --> Client : 200 OK (byte[] + 헤더)
+end
+deactivate BoardController
+
+@enduml

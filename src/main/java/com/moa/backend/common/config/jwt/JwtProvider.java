@@ -46,3 +46,6 @@ public class JwtProvider {
 		return claims.get("memberId", Long.class);
 	}
 }
+
+
+

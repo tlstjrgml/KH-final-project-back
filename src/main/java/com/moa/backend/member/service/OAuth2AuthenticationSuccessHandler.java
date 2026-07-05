@@ -31,6 +31,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     //jwt토큰 발급 
     String token = jwtProvider.generateToken(memberId, member.getIsAdmin(), member.getNickname());
     //토큰을 쿼리스트링에 담아 리다이렉
-    response.sendRedirect("http://localhost:5173/?token=" + token);
+    response.sendRedirect("http://3.38.12.241/?token=" + token);
     }
 }
