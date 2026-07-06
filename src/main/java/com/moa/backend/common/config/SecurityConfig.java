@@ -31,7 +31,7 @@ public class SecurityConfig {
             .cors(cors -> cors
                 .configurationSource(request -> {
                     var config = new org.springframework.web.cors.CorsConfiguration();
-                    config.setAllowedOrigins(java.util.List.of("http://localhost:5173", "http://localhost:5174"));
+                    config.setAllowedOrigins(java.util.List.of("http://localhost:5173", "http://localhost:5174", "http://3.38.12.241"));
                     config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
                     config.setAllowedHeaders(java.util.List.of("*"));
                     config.setExposedHeaders(java.util.List.of("Content-Disposition"));

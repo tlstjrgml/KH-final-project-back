@@ -1,0 +1,4 @@
+@startuml
+Alice -> Bob: 요청
+Bob --> Alice: 응답
+@enduml

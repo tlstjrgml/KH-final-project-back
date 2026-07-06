@@ -157,7 +157,7 @@
 				NAME = #{dto.name},
 			</if>
 			<if test="dto.birthDate != null and dto.birthDate != ''">
-				BIRTH_DATE = #{dto.birthDate},
+				BIRTH_DATE = TO_DATE(#{dto.birthDate}, 'YYYY-MM-DD'),
 			</if>
 			<if test="dto.gender != null and dto.gender != ''">
 				GENDER = #{dto.gender},
